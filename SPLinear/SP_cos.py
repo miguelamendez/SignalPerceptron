@@ -13,14 +13,7 @@ m=3;  #Módule (base) Ej: si m=3, se genera 0,1,2,0,1,2,...
 k=2; #Number of nested loops. That is, number of variables
 aix=np.zeros([k]); #Array of indexes (to order them)
 aiw=np.zeros([k]); #Array of indexes (to order them)
-ni=1   #Number of Iterations
-
-for i in range(0, k, 1):
-	ni=ni*m
-
-print("ni=",ni)
-
-
+ni=m**k   #Number of Iterations
 n=k  #No. of variables
 nn=m**n #|m^k| domain space
 nnn=m**nn #|Delta|=|m^m^k| function space
