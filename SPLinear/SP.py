@@ -11,14 +11,7 @@ m=3;  #Módule (base) Ej: si m=3, se genera 0,1,2,0,1,2,...
 k=2; #Number of nested loops. That is, number of variables
 aix=np.zeros([k]); #Array of indexes (to order them)
 aiw=np.zeros([k]); #Array of indexes (to order them)
-ni=1   #Number of Iterations
-
-for i in range(0, k, 1):
-	ni=ni*m
-
-print("ni=",ni)
-
-
+ni=m**k   #Number of Iterations
 n=k  #No. of variables
 nn=m**n #|m^k| domain space
 nnn=m**nn #|Delta|=|m^m^k| function space
@@ -35,7 +28,7 @@ for xi in range(0,ni,1):
 	for xj in range(0,k,1): #Generamos los índices
 		aix[xj]= int ( kx % m ); #Lo metemos en array 
 		kx=int(kx/m); #siguientes índices
-	print("aix=",aix)
+	#print("aix=",aix)
 	j=0;
 	#First Inner nested loop that generates all combinations of w for a signal
 	for wi in range(0,ni,1):
@@ -43,7 +36,7 @@ for xi in range(0,ni,1):
 		for wj in range(0,k,1): #Generamos los índices
 			aiw[wj]= int ( kw % m ) ; #Lo metemos en array 
 			kw=int(kw/m); #siguientes índices
-			print(i,j,A[i,j],"|",end='')
+			#print(i,j,A[i,j],"|",end='')
 		exponente=0
 		#Seconf Inner loop that  multiplies and sums
 		for ii in range(0,k,1):
@@ -102,9 +95,9 @@ def single_func():
 	p2=np.array([0,1,2,3,1,2,4,2,1,2,3,1,3,3,0,0,4,1,2,1,3,0,4,1,0]) 
 	h3=np.array([5,2,3,1,3,3,5,0,4,1,2,5,3,0,4,1,0,0,1,2,5,1,2,4,2,5,2,3,1,3,3,5,0,4,1,2,5,3,0,4,1,0,0,1,2,5,1,2,4,2,5,2,3,1,3,3,5,0,4,1,2,5,3,0,4,1,0,0,1,2,5,1,2,4,2,5,2,3,1,3,3,5,0,4,1,2,5,3,0,4,1,0,0,1,2,5,1,2,4,2,5,2,3,1,3,3,5,0,4,1,2,5,3,0,4,1,0,0,1,2,5,1,2,4,2,5,2,3,1,3,3,5,0,4,1,2,5,3,0,4,1,0,0,1,2,5,1,2,4,2,5,2,3,1,3,3,5,0,4,1,2,5,3,0,4,1,0,0,1,2,5,1,2,4,2,5,2,3,1,3,3,5,0,4,1,2,5,3,0,4,1,0,0,1,2,5,1,2,4,2,1,2,5,4,3,4,2,0,1,4,2,5,3,4,4,3]) 
 	o2=([0,1,2,3,1,2,5,2,1,6,3,1,5,3,7,0,4,1,2,1,3,0,7,1,7,0,1,2,3,1,2,5,2,1,6,3,1,5,3,7,0,4,1,2,1,3,0,7,1,7,1,3,4,7,6,1,2,3,7,0,2,5,3,7])
-	X = np.linalg.inv(A).dot(o2)
+	X = np.linalg.inv(A).dot(h3)
 	print("parameters for function:",X)
 all_func();
 #single_func();
-print(nnn)
+print("The function space size is: ",nnn)
 print(" End of lpn")
