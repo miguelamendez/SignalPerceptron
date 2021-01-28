@@ -25,7 +25,7 @@ def Signal_perceptron_gen(m,k):
 		#print("x trans",x.shape)
 		exp=np.dot(arrw,x)
 		#print("exponent",exp.shape)
-		o_sp=np.exp(1j*np.pi*exp)
+		o_sp=np.cos(np.pi*exp)
 		#print("after exponential",o_sp)
 		#print("theta vector",theta.shape)
 		y_sp=np.dot(alpha,o_sp)
