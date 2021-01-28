@@ -1,20 +1,8 @@
 import numpy as np
 import random as rm
 
-x,y= np.mgrid[-1:1:.1, -1:1:.1]
 
-V = y*np.cos(np.pi*x) # just a random function for the potential
 
-#Ex,Ey= np.gradient(V)
-#print(Ex,Ey)
-
-y_real=[0,1,1,0]
-y_pred=[1,0,1,0]
-
-def MSE(y_real,y_predict):
-	#total= 1/((len(y_real))*np.sqrt(y_real-y_pred)
-	total= np.sum(total)
-	return total
 
 def Signal_perceptron_gen(m,k):
 	wki=[]
@@ -30,7 +18,7 @@ def Signal_perceptron_gen(m,k):
 		wki.append(w)
 	arrw = np.asarray(wki)
 	print("frecuency matrix",arrw.shape)
-	def signal_perceptron(theta,x):
+	def signal_perceptron(alpha,x):
 		y_pred = 0
 		#print("x",x.shape)
 		x = np.transpose(x)
@@ -38,33 +26,32 @@ def Signal_perceptron_gen(m,k):
 		exp=np.dot(arrw,x)
 		#print("exponent",exp.shape)
 		o_sp=np.exp(1j*np.pi*exp)
-		print("after exponential",o_sp)
-		print("theta vector",theta.shape)
-		y_sp=np.dot(theta,o_sp)
-		print("result",y_sp)
+		#print("after exponential",o_sp)
+		#print("theta vector",theta.shape)
+		y_sp=np.dot(alpha,o_sp)
+		#print("result",y_sp)
+		return y_sp , o_sp
 	return signal_perceptron
 	
-def gradientDescent(x, y, theta, alpha, m,k, numIterations):
+def gradientDescent(X, Y, Alpha, m,k,gamma=.05):
     SP = Signal_perceptron_gen(m,k)
-    for i in range(0, numIterations):
-        print(x)
-        hypothesis = SP(x, theta)
-        hypothesis = np.exp(hypothesis*1j*np.pi/m)
-        loss = hypothesis - y
-        # avg cost per example (the 2 in 2*m doesn't really matter here.
-        # But to be consistent with the gradient, I include it)
-        cost = np.sum(loss ** 2) / (2 * m)
-        print("Iteration %d | Cost: %f" % (i, cost))
-        # avg gradient per example
-        gradient = np.dot(xTrans, loss) / m
-        # update
-        theta = theta - alpha * gradient
-    return theta
+    N=len(X)
+    for i in range(0, 1000):
+        #print(X)
+        hypothesis ,m_exp= SP(Alpha,X)
+        loss = Y-hypothesis
+        #print(loss,"\n",m_exp)
+        gradient= -2/N*np.dot(loss,m_exp)
+        #print(gradient)
+        Alpha = Alpha - gamma * gradient
+    return Alpha
 
 def loss(y_label,y_pred):
 	n=len(y_label)
 	loss= (y_label-y_pred)**2
 	loss= 1/n*(np.sum(loss))
+	print (y_label,y_pred)
+	print(loss)
 	
 
 def data_gen(m,k,y=0):
@@ -77,14 +64,14 @@ def data_gen(m,k,y=0):
 		for j in range(0,k,1): #Generamos los índices
 			aix[j]= int ( kx % m ); #Lo metemos en array 
 			kx=int(kx/m); #siguientes índices
-		x=[]
+		xt=[]
 		for l in aix:
-			x.append(l)
-		xki.append(x)
-	arrx = np.asarray(xki)
+			xt.append(l)
+		xki.append(xt)
+	X = np.asarray(xki)
 	#Boolean Funtion:
 	if m==2 and y!=0:
-		return arrx, y
+		return X, y,alpha
 	
 	else:
 	#Creating random function
@@ -95,9 +82,9 @@ def data_gen(m,k,y=0):
 			r=fun%m
 			fun=int(fun/m)
 			b[j]=r
-		return arrx, b, alpha
+		return X, b, alpha
 		
 x,y,a=data_gen(2,2)	
-print(x,y,a)
-signal=Signal_perceptron_gen(2,2)
-signal(a,x)
+print(y)
+alpha_gradient=gradientDescent(x,y,a,2,2)
+print(alpha_gradient)
