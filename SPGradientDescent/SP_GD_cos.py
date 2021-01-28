@@ -36,7 +36,7 @@ def Signal_perceptron_gen(m,k):
 def gradientDescent(X, Y, Alpha, m,k,gamma=.05):
     SP = Signal_perceptron_gen(m,k)
     N=len(X)
-    for i in range(0, 2000):
+    for i in range(0, 20000):
         #print(X)
         hypothesis ,m_exp= SP(Alpha,X)
         loss = Y-hypothesis
@@ -84,7 +84,10 @@ def data_gen(m,k,y=0):
 			b[j]=r
 		return X, b, alpha
 		
-x,y,a=data_gen(2,2)	
+x,y,a=data_gen(3,1)	
 print(y)
-alpha_gradient=gradientDescent(x,y,a,2,2)
+alpha_gradient=gradientDescent(x,y,a,3,1)
 print(alpha_gradient)
+SP=Signal_perceptron_gen(3,1)
+hypothesis,x = SP(alpha_gradient,x)
+loss(y,hypothesis)

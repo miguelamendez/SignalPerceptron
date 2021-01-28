@@ -10,7 +10,7 @@ import numpy as np
 #print(X2)
 
 m=3;  #Módule (base) Ej: si m=3, se genera 0,1,2,0,1,2,...
-k=2; #Number of nested loops. That is, number of variables
+k=1; #Number of nested loops. That is, number of variables
 aix=np.zeros([k]); #Array of indexes (to order them)
 aiw=np.zeros([k]); #Array of indexes (to order them)
 ni=m**k   #Number of Iterations
@@ -100,7 +100,7 @@ def single_func():
 	o2=([0,1,2,3,1,2,5,2,1,6,3,1,5,3,7,0,4,1,2,1,3,0,7,1,7,0,1,2,3,1,2,5,2,1,6,3,1,5,3,7,0,4,1,2,1,3,0,7,1,7,1,3,4,7,6,1,2,3,7,0,2,5,3,7])
 	X = np.linalg.inv(A).dot(t2v1)
 	print("parameters for function:",X)
-#all_func();
-single_func();
+all_func();
+#single_func();
 print("The function space size is: ",nnn)
 print(" End of lpn")
