@@ -182,8 +182,8 @@ def full_analysis_train():
     print("Single function learning")
     #Training Hyperparameters:
     #----------------------------------------------------------
-    epochs = 1000
-    lr = .01
+    epochs = 100
+    lr = .1
     optimizer_name="sgd"
     loss_fn_1 = nn.MSELoss()
     loss_fn_2 = nn.MSELoss()
@@ -236,8 +236,8 @@ def full_analysis_train():
     print("Multiple function learning")
     #Training Hyperparameters:
     #----------------------------------------------------------
-    epochs = 1000
-    lr = .01
+    #epochs = 100
+    #lr = .1
     optimizer_name="SGD"
     loss_fn_pt1 = nn.MSELoss()
     loss_fn_pt2 = nn.MSELoss()
@@ -251,41 +251,57 @@ def full_analysis_train():
     print("Parameters: ")
     print("Epochs: ",epochs," lr: ",lr," optimizer: ",optimizer_name)
     #----------------------------------------------------------
+    all_mh=[]
     print("Signal Perceptron numpy")
-    total_hist1,final_loss1,learned_epochs1=train_mh_numpy(x_train=x,y_train=y,model=sp_np_mh,epochs=epochs,learning_rate=lr,loss_fn=MSE_Loss)
-    print(final_loss1,learned_epochs1)
+    total_hist6,final_loss6,learned_epochs6=train_mh_numpy(x_train=x,y_train=y,model=sp_np_mh,epochs=epochs,learning_rate=lr,loss_fn=MSE_Loss)
+    a=total_hist6[0]
+    all_mh.append(a)
+    print(final_loss6,learned_epochs6)
     print("Real Signal Perceptron numpy")
-    total_hist2,final_loss2,learned_epochs2=train_mh_numpy(x_train=x,y_train=y,model=rsp_np_mh,epochs=epochs,learning_rate=lr,loss_fn=MSE_Loss)
-    print(final_loss2,learned_epochs2)
+    total_hist7,final_loss7,learned_epochs7=train_mh_numpy(x_train=x,y_train=y,model=rsp_np_mh,epochs=epochs,learning_rate=lr,loss_fn=MSE_Loss)
+    a=total_hist7[0]
+    all_mh.append(a)
+    print(final_loss7,learned_epochs7)
     print("Real Signal Perceptron pytorch")
-    total_hist3,final_loss3,learned_epochs3=train_mh_pytorch(x_train=x_train,y_train=y_train,model=rsp_mh,PATH=PATH5,epochs=epochs,optimizer=optimizer2,loss_fn=loss_fn_pt1)
-    print(final_loss3,learned_epochs3)
+    total_hist8,final_loss8,learned_epochs8=train_mh_pytorch(x_train=x_train,y_train=y_train,model=rsp_mh,PATH=PATH5,epochs=epochs,optimizer=optimizer2,loss_fn=loss_fn_pt1)
+    a=total_hist8[0]
+    all_mh.append(a)
+    print(final_loss8,learned_epochs8)
     print("Fourier Signal Perceptron pytorch")
-    total_hist4,final_loss4,learned_epochs4=train_mh_pytorch(x_train=x_train,y_train=y_train,model=fsp_mh,PATH=PATH4,epochs=epochs,optimizer=optimizer1,loss_fn=loss_fn_pt2)
-    print(final_loss4,learned_epochs4)
+    total_hist9,final_loss9,learned_epochs9=train_mh_pytorch(x_train=x_train,y_train=y_train,model=fsp_mh,PATH=PATH4,epochs=epochs,optimizer=optimizer1,loss_fn=loss_fn_pt2)
+    a=total_hist9[0]
+    all_mh.append(a)
+    print(final_loss9,learned_epochs9)
     print(" Multilayer Perceptron pytorch")
-    total_hist5,final_loss5,learned_epochs5=train_mh_pytorch(x_train=x_train,y_train=y_train,model=mlp_mh,PATH=PATH6,epochs=epochs,optimizer=optimizer3,loss_fn=loss_fn_pt3)
-    print(final_loss5,learned_epochs5)
+    total_hist,final_loss,learned_epochs=train_mh_pytorch(x_train=x_train,y_train=y_train,model=mlp_mh,PATH=PATH6,epochs=epochs,optimizer=optimizer3,loss_fn=loss_fn_pt3)
+    a=total_hist[0]
+    all_mh.append(a)
+    print(final_loss,learned_epochs)
     #Ploting loss for trained networks. 
     title1='Training loss of '+str(len(total_hist1))+' functions of the m:'+str(m)+',k:'+str(k)+' function space with SP_np'
     title2='Training loss of '+str(len(total_hist2))+' functions of the m:'+str(m)+',k:'+str(k)+' function space with RSP_np'
     title3='Training loss of '+str(len(total_hist3))+' functions of the m:'+str(m)+',k:'+str(k)+' function space with SP_pt'
     title4='Training loss of '+str(len(total_hist4))+' functions of the m:'+str(m)+',k:'+str(k)+' function space with FSP_pt'
     title5='Training loss of '+str(len(total_hist5))+' functions of the m:'+str(m)+',k:'+str(k)+' function space with MLP_pt'
+    title='Training loss for learning the m:'+str(m)+',k:'+str(k)+' function space'
     dir_section="run1/sgd/"
-    image_path1="data/experiments/exp1/"+dir_section+"sp_np_mh.png"
-    image_path2="data/experiments/exp1/"+dir_section+"rsp_np_mh.png"
-    image_path3="data/experiments/exp1/"+dir_section+"rsp_pt_mh.png"
-    image_path4="data/experiments/exp1/"+dir_section+"fsp_pt_mh.png"
-    image_path5="data/experiments/exp1/"+dir_section+"mlp_pt_mh.png"
+    image_path6="data/experiments/exp1/"+dir_section+"sp_np_mh.png"
+    image_path7="data/experiments/exp1/"+dir_section+"rsp_np_mh.png"
+    image_path8="data/experiments/exp1/"+dir_section+"rsp_pt_mh.png"
+    image_path9="data/experiments/exp1/"+dir_section+"fsp_pt_mh.png"
+    image_path="data/experiments/exp1/"+dir_section+"mlp_pt_mh.png"
+    image_path_mh="data/experiments/exp1/"+dir_section+"all_mh.png"
     #image_path3="data/experiments/exp1/run1/adam/rsp_pt_mh"
     #image_path4="data/experiments/exp1/run1/adam/fsp_pt_mh"
     #image_path5="data/experiments/exp1/run1/adam/mlp_pt_mh"
-    functions_plot(total_hist1,title1,image_path1)
-    functions_plot(total_hist2,title2,image_path2)
-    functions_plot(total_hist3,title3,image_path3)
-    functions_plot(total_hist4,title4,image_path4)
-    functions_plot(total_hist5,title5,image_path5)
+    functions_plot(total_hist6,title1,image_path6)
+    functions_plot(total_hist7,title2,image_path7)
+    functions_plot(total_hist8,title3,image_path8)
+    functions_plot(total_hist9,title4,image_path9)
+    functions_plot(total_hist,title5,image_path)
+    labels=["SP_np","RSP_np","RSP_pt","FSP_pt","MLP_pt"]
+    functions_plot(all_mh,title,image_path_mh,labels)
+    #print(all_mh)
     #################################################################################################################################
     #################################################################################################################################
     #################################################################################################################################

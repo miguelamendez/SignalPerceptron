@@ -41,14 +41,18 @@ def int_to_bin_dataset(dataset,num_bits=8):
 
 
 """This utilities are for ploting loss"""
-def functions_plot(data,title,path=[]):
+def functions_plot(data,title,path=[],labels=[]):
+    print("dse",len(data))
     for i in range(0,len(data)):
         x_axis=[]
         y_axis=[]
         for j in data[i]:
             x_axis.append(j[0])
             y_axis.append(j[1])
-        a= "Function:"+str(i)
+        if not bool(labels):
+            a= "Function:"+str(i)
+        else:
+            a=labels[i]
         plt.plot(x_axis,y_axis, label = a)
     titles=title
     plt.title(titles)
@@ -59,6 +63,8 @@ def functions_plot(data,title,path=[]):
         plt.show()
     else:
         plt.savefig(path)
+        plt.show()
+        
 
 def single_function_plot(data,title):
     x_axis=[]

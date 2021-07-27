@@ -41,7 +41,7 @@ def train_numpy(x_train,y_train,model,epochs,learning_rate,loss_fn):
         for j in range(0,epochs):
             pred,signals=model.forward(x_train)
             loss = loss_fn(pred, i)
-            loss = np.sum(loss)
+            loss = np.mean(loss)
             sp.GD_MSE_SP_step(i, x_train, model,learning_rate)
             history_train.append([j,loss])
             if not bool(learned_epoch):
@@ -83,7 +83,7 @@ def train_mh_numpy(x_train,y_train,model,epochs,learning_rate,loss_fn):
     for j in range(0,epochs):
         pred,signals=model.forward(x_train)
         loss = loss_fn(pred, y_train)
-        loss = np.sum(loss)
+        loss = np.mean(loss)
         sp.GD_MSE_SP_step(y_train, x_train, model,learning_rate)
         history_train.append([j,loss])
         if not bool(learned_epoch):
@@ -98,20 +98,17 @@ def train_mnist(dataloader, model, loss_fn, optimizer,device):
     size = len(dataloader.dataset)
     for batch, (X, y) in enumerate(dataloader):
         X, y = X.to(device), y.to(device)
-
         # Compute prediction error
         pred = model(X)
         loss = loss_fn(pred, y)
-
         # Backpropagation
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-
         if batch % 100 == 0:
             loss, current = loss.item(), batch * len(X)
             print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
-            return loss 
+    return loss 
 
 def test_mnist(dataloader, model, loss_fn,device):
     size = len(dataloader.dataset)

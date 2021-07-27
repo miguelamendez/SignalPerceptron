@@ -61,7 +61,7 @@ mlp1 = MLP1_mnist().to(device)
 mlp2 = MLP2_mnist().to(device)
 #Saving Initial values of parameters
 PATH="data/models/idm_FSP128_mnist.pt"
-torch.save(fsp.state_dict(),PATH)
+torch.save(fsp128.state_dict(),PATH)
 PATH1="data/models/idm_FSP512_mnist.pt"
 torch.save(fsp.state_dict(),PATH1)
 PATH2="data/models/idm_MLP1_mnist.pt"
@@ -164,16 +164,20 @@ print(prof.key_averages().table(sort_by="cuda_time_total", row_limit=10))
 #Training Hyperparameters:
 #----------------------------------------------------------
 epochs = 9
+lr=.001
 loss_fn = nn.CrossEntropyLoss()
-#optimizer = torch.optim.Adam(fsp128.parameters(), lr=.001)
-#optimizer1 = torch.optim.Adam(fsp.parameters(), lr=.001)
-#optimizer2 = torch.optim.Adam(mlp1.parameters(), lr=.001)
-#optimizer3 = torch.optim.Adam(mlp2.parameters(), lr=.001)
-optimizer = torch.optim.SGD(fsp128.parameters(), lr=.001)
-optimizer1 = torch.optim.SGD(fsp.parameters(), lr=.001)
-optimizer2 = torch.optim.SGD(mlp1.parameters(), lr=.001)
-optimizer3 = torch.optim.SGD(mlp2.parameters(), lr=.001)
+optimizer = torch.optim.Adam(fsp128.parameters(), lr=lr)
+optimizer1 = torch.optim.Adam(fsp.parameters(), lr=lr)
+optimizer2 = torch.optim.Adam(mlp1.parameters(), lr=lr)
+optimizer3 = torch.optim.Adam(mlp2.parameters(), lr=lr)
+#optimizer = torch.optim.SGD(fsp128.parameters(), lr=lr)
+#optimizer1 = torch.optim.SGD(fsp.parameters(), lr=lr)
+#optimizer2 = torch.optim.SGD(mlp1.parameters(), lr=lr)
+#optimizer3 = torch.optim.SGD(mlp2.parameters(), lr=lr)
+print("Optimizer: Adam ,lr:" ,lr)
+#print("Optimizer: SGD ,lr:" ,lr)
 #----------------------------------------------------------
+
 print("Training models with MNIST DATASET :")
 print("Fourier Signal Perceptron 128")
 optimal_epoch=[]
@@ -240,6 +244,8 @@ print("Optimal  epoch:")
 print(optimal_epoch)
 
 print("Training models with FashionMNIST DATASET :")
+#Loading initial parameters
+fsp128.load_state_dict(torch.load(PATH))
 fsp.load_state_dict(torch.load(PATH1))
 mlp1.load_state_dict(torch.load(PATH2))
 mlp2.load_state_dict(torch.load(PATH3))
