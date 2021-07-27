@@ -5,15 +5,15 @@ from utils import *
 from data_load import *
 
 
-def main_pytorch(m, k, epochs, lr, sample=[]):
-    """[summary]
-    Main function for running PyTorch based experiments.
+def main_pytorch(m, k, epochs, lr, sample=-1):
+    """Main function for running PyTorch based experiments.
+
     Args:
         m ([type]): [description]
         k ([type]): [description]
         epochs ([type]): [description]
         lr ([type]): [description]
-        sample (list, optional): [description]. Defaults to [].
+        sample (int, optional): [description]. Defaults to -1.
 
     Returns:
         [type]: [description]
@@ -51,7 +51,7 @@ def main_pytorch(m, k, epochs, lr, sample=[]):
     total_hist2, final_loss2 = train_loop_pytorch(x_train, y_train,model2, PATH2, epochs=epochs, learning_rate=lr)
     
     # Loss plotting for trained networks.
-    # [print(i.item()) for i in final_loss1] # Raf: There was a bug in this line. Changed it to final_loss1.
+    [print(i.item()) for i in final_loss1] # Raf: There was a bug in this line. Changed it to final_loss1.
     title1 = 'Training loss of ' + str(len(total_hist1)) + ' functions of the' + \
         str(m) + '-valued ' + str(k) + '-ary  function space with SP_r_pytorch'
     title2 = 'Training loss of ' + str(len(total_hist2)) + ' functions of the' + \
@@ -62,7 +62,19 @@ def main_pytorch(m, k, epochs, lr, sample=[]):
     return final_loss1, final_loss2
 
 
-def main_numpy(m,k,epochs,lr,sample=[]):
+def main_numpy(m, k, epochs, lr, sample=-1):
+    """Main function used to run numpy experiments.
+
+    Args:
+        m ([type]): [description]
+        k ([type]): [description]
+        epochs ([type]): [description]
+        lr ([type]): [description]
+        sample (int, optional): [description]. Defaults to -1.
+
+    Returns:
+        [type]: [description]
+    """
     # Dataset generation
     x_train, y_train = data_gen(m, k, sample)
     print(x_train, y_train)
@@ -89,6 +101,7 @@ def main_numpy(m,k,epochs,lr,sample=[]):
         str(m) + '-valued ' + str(k) + '-ary  function space with SP_r_numpy'
     functions_plot(total_hist1, title1)
     functions_plot(total_hist2, title2)
+
     return final_loss1, final_loss2
 
 

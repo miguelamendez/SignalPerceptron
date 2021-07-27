@@ -29,19 +29,18 @@ def gen_finite_array(m, length, size):
     return y
 
 
-def data_gen(m, k, func_samples=[]):
+def data_gen(m, k, func_samples=-1):
     """[summary]
 
     Args:
         m ([type]): [description]
         k ([type]): [description]
-        func_samples (list, optional): [description]. Defaults to [].
+        func_samples (int, optional): [description]. Defaults to -1.
 
     Returns:
         [type]: [description]
     """
-
-    if bool(func_samples):
+    if func_samples > 0:
         #Creating n random functions
         Y = np.random.randint(m, size=(func_samples, m**k))
     else:
