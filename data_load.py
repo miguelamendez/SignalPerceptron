@@ -45,8 +45,12 @@ def data_gen(m, k, func_samples=-1):
         Y = np.random.randint(m, size=(func_samples, m**k))
     else:
         #Creating all possible functions 
+<<<<<<< HEAD
+        Y=gen_finite_array(m,length=m**k,size=m**(m**k))
+=======
         Y = gen_finite_array(m, length=m*k, size=m**(m**k))
     
+>>>>>>> ab1bf0c162be1e04034334c18d64fbe3c7eb98c6
     #Creating Dataset that is all possible combinations of the inputs
     X = gen_finite_array(m, length=k, size=(m**k))
     return X, Y

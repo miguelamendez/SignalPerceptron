@@ -41,7 +41,7 @@ def int_to_bin_dataset(dataset,num_bits=8):
 
 
 """This utilities are for ploting loss"""
-def functions_plot(data,title):
+def functions_plot(data,title,path=[]):
     for i in range(0,len(data)):
         x_axis=[]
         y_axis=[]
@@ -55,7 +55,10 @@ def functions_plot(data,title):
     plt.xlabel('Epochs')
     plt.ylabel('Loss')
     plt.legend()
-    plt.show()
+    if not bool(path):
+        plt.show()
+    else:
+        plt.savefig(path)
 
 def single_function_plot(data,title):
     x_axis=[]
@@ -71,3 +74,5 @@ def single_function_plot(data,title):
     plt.ylabel('Loss')
     plt.legend()
     plt.show()
+
+"""Utilis for measuring models properties"""

@@ -14,10 +14,8 @@
         SP_numpy:True. Implementation of the signal perceptron using the "numpy" library (USED IN PAPER EXPERIMENTS)
         SP_r_numpy:True. Implementation of the real signal perceptron using the "numpy" library (USED IN PAPER EXPERIMENTS)
         SP_pytorch:False. Implementation of the signal perceptron using the "pytorch" library (Not functional as pytorch has problems to calculating complex gradients with respect of complex numbers)
-        SP_r_pytorch:True. Implementation of the real signal perceptron using the "pytorch" library (USED IN PAPER EXPERIMENTS)
-        SP_r_v2_pytorch:True. Second Implementation of the real signal perceptron using the "pytorch" library (EXPERIMENTAL NOT USED IN THE PAPER )
-        SP_r_appx_pytorch:False. Implementation of the real signal perceptron with learnable frequencies and fixed ammount of signals (EXPERIMENTAL NOT USED IN THE PAPER)
-
+        RSP_pytorch:True. Implementation of the real signal perceptron using the "pytorch" library (USED IN PAPER EXPERIMENTS)
+        FSP_pytorch:True. Implementation of the real signal perceptron with learnable frequencies and fixed ammount of signals (USED IN THE PAPER EXPERIMENTS)
            """
 import numpy as np
 import torch
@@ -30,7 +28,7 @@ import math
 #Signal Perceptron Functions:
 def walshMatrix(n):
     N=2**n
-    H=np.zeros([N,N])
+    H=np.zeros([N,N],dtype=np.float32)
     for i in range(0,N):
         for j in range(0,N):
             l=0
@@ -87,7 +85,8 @@ def SP_Matrix(m,k):
             #	print(i,j,A[i,j],"|",end='')
             #	print()
         i=i+1
-    return A
+        
+    return A 
 
 def SP_r_Matrix(m,k):
     aix=np.zeros([k]); #Array of indexes (to order them)
@@ -97,7 +96,7 @@ def SP_r_Matrix(m,k):
     nn=m**n #|m^k| domain space
     nnn=m**nn #|Delta|=|m^m^k| function space
     # Matrix
-    A=np.zeros([nn,nn]) 
+    A=np.zeros([nn,nn],dtype=np.float32) 
     divfrec=m-1
     i=0; j=0
     v=0; 
@@ -163,14 +162,16 @@ def frequencies_gen(m,k):
         for l in aiw:
             w.append(l)
         wki.append(w)
-    arrw = np.asarray(wki)
+    arrw = np.asarray(wki,dtype=np.float32)
     return arrw
 
-def GD_MSE_SP_step(Y, X, model,lr=.01):
+def GD_MSE_SP_step(Y, X, model,lr):
     N=len(X)
     #Calculate the gradient
     pred ,m_exp= model.forward(X)
+    #print("pred",pred,"real",Y)
     gradient= -2/N*np.dot((Y-pred),m_exp)
+    #print("grad",gradient)
     #Update parameters
     model.alphas = model.alphas - lr * gradient
 
@@ -183,10 +184,10 @@ def MSE_Loss(y_label,y_pred):
 #Signal Perceptron Classes:
 
 class SP_numpy(object):
-    def __init__(self,m,k):
+    def __init__(self,m,k,heads=1):
         self.m=m
         self.freq=frequencies_gen(m,k)
-        self.init_alphas=.5 * np.random.randn(1, m**k)
+        self.init_alphas=.5 * np.random.randn(heads, m**k)
         self.alphas=self.init_alphas.copy()
     #print("frecuency matrix",arrw.shape)
     def forward(self,x):
@@ -202,15 +203,15 @@ class SP_numpy(object):
         #print("result",y_sp)
         return y_sp , o_sp
     def count(self):
-        self.alphas=len(self.alphas)
+        return self.alphas.size
     def reset_params(self):
         self.alphas=self.init_alphas
 
-class SP_r_numpy(object):
-    def __init__(self,m,k):
+class RSP_numpy(object):
+    def __init__(self,m,k,heads=1):
         self.m=m
         self.freq=frequencies_gen(m,k)
-        self.init_alphas=.5 * np.random.randn(1, m**k)
+        self.init_alphas=.5 * np.random.randn(heads, m**k)
         self.alphas=self.init_alphas.copy()
     #print("frecuency matrix",arrw.shape)
     def forward(self,x):
@@ -226,102 +227,121 @@ class SP_r_numpy(object):
         #print("result",y_sp)
         return y_sp , o_sp
     def count(self):
-        self.alphas=len(self.alphas)
+        return self.alphas.size
     def reset_params(self):
         self.alphas=self.init_alphas
 
 class SP_pytorch(nn.Module):
-    def __init__(self, m, k, device=None, dtype=None):
+    def __init__(self, m, k, heads=1,device=None, dtype=None):
         factory_kwargs = {'device': device, 'dtype': dtype}
         super(SP_pytorch, self).__init__()
         self.m = m
-        self.k = k
-        self.freq=torch.from_numpy(frequencies_gen(m,k))
-        self.freq=self.freq.type(torch.cuda.FloatTensor)
-        self.freq=torch.transpose(self.freq,0,1)
-        #print(self.freq)
-        params=torch.empty((m**k),**factory_kwargs)
-        params=torch.unsqueeze(params, 0)
-        self.alphas = nn.Parameter(params)
-        #print(self.alphas)
-        self.reset_parameters()
-
-    def reset_parameters(self):
-        nn.init.kaiming_uniform_(self.alphas, a=math.sqrt(5))
-
-    def forward(self, x):
-        #exp=torch.dot(x,self.freq)
-        y=[]
-        exp=torch.mm(x,self.freq)
-        #print("exponent",exp)
-        o_sp=torch.exp((torch.tensor(math.pi)*j/(self.m-1))*exp)
-        #print("after exponential",o_sp)
-        y_sp=torch.mm(self.alphas,o_sp)
-        y.append(y_sp)
-        #print("result",y_sp)
-        return y_sp
-
-class SP_r_pytorch(nn.Module):
-    def __init__(self, m, k, device=None, dtype=None):
-        factory_kwargs = {'device': device, 'dtype': dtype}
-        super(SP_r_pytorch, self).__init__()
-        self.m = m
-        self.k = k
-        self.freq=torch.from_numpy(frequencies_gen(m,k))
-        self.freq=self.freq.type(torch.cuda.FloatTensor)#Here change if not using gpu
-        self.freq=torch.transpose(self.freq,0,1)
-        #print(self.freq)
-        params=torch.empty((m**k),**factory_kwargs)
-        params=torch.unsqueeze(params, 0)
-        self.alphas = nn.Parameter(params)
-        #print(self.alphas)
-        self.reset_parameters()
-
-    def reset_parameters(self):
-        nn.init.kaiming_uniform_(self.alphas, a=math.sqrt(5))
-
-    def forward(self, x):
-        #exp=torch.dot(x,self.freq)
-        y=[]
-        exp=torch.mm(x,self.freq)
-        #print("exponent",exp)
-        o_sp=torch.cos((torch.tensor(math.pi)/(self.m-1))*exp)
-        #print("after exponential",o_sp)
-        y_sp=torch.mm(self.alphas,o_sp)
-        y.append(y_sp)
-        #print("result",y_sp)
-        return y_sp
-
-class SP_r_v2_pytorch(nn.Module):
-    def __init__(self, m, k, device=None, dtype=None):
-        factory_kwargs = {'device': device, 'dtype': dtype}
-        super(SP_r_v2_pytorch, self).__init__()
-        self.m = m
-        self.k = k
         params = torch.from_numpy(frequencies_gen(m,k))
         self.freq = nn.Linear(k, m**k,bias=False)
-        self.freq.load_params(params)
+        self.freq.weight = torch.nn.Parameter(params)
         for param in self.freq.parameters():
             param.requires_grad = False
-        self.alphas= nn.Linear(m**k, 1,bias=False)
+        self.alphas= nn.Linear(m**k, heads,bias=False)
 
     def forward(self, x):
         freq=self.freq(x)
-        signals=torch.cos(freq)
+        signals=torch.exp((torch.tensor(math.pi)*j/(self.m-1))*freq)
         x=self.alphas(signals)
         return x
 
-class SP_r_appx_pytorch(nn.Module):
-    def __init__(self, n, k, device=None, dtype=None):
+
+class RSP_pytorch(nn.Module):
+    def __init__(self, m, k, heads=1,device=None, dtype=None):
         factory_kwargs = {'device': device, 'dtype': dtype}
-        super(SP_r_appx_pytorch, self).__init__()
+        super(RSP_pytorch, self).__init__()
+        self.m = m
+        params = torch.from_numpy(frequencies_gen(m,k))
+        self.freq = nn.Linear(k, m**k,bias=False)
+        self.freq.weight = torch.nn.Parameter(params)
+        for param in self.freq.parameters():
+            param.requires_grad = False
+        self.alphas= nn.Linear(m**k, heads,bias=False)
+
+    def forward(self, x):
+        freq=self.freq(x)
+        signals=torch.cos((torch.tensor(math.pi)/(self.m-1))*freq)
+        x=self.alphas(signals)
+        return x
+
+class FSP_pytorch(nn.Module):
+    def __init__(self, n, k, heads=1,device=None, dtype=None):
+        factory_kwargs = {'device': device, 'dtype': dtype}
+        super(FSP_pytorch, self).__init__()
         self.m = n
         self.k = k
         self.freq = nn.Linear(k, n,bias=False)
-        self.alphas =nn.Linear(n, 1,bias=False)
+        self.alphas =nn.Linear(n, heads,bias=False)
 
     def forward(self, x):
         freq=self.freq(x)
         signals=torch.cos(freq)
         x=self.alphas(signals)
         return x
+
+
+#Deprecated not working properly , use it under your own risk
+#class SP_r_pytorch(nn.Module):
+#    def __init__(self, m, k, device=None, dtype=None):
+#        factory_kwargs = {'device': device, 'dtype': dtype}
+#        super(SP_r_pytorch, self).__init__()
+#        self.m = m
+#        self.k = k
+#        self.freq=torch.from_numpy(frequencies_gen(m,k))
+#        self.freq=self.freq.type(torch.cuda.FloatTensor)#Here change if not using gpu
+#        self.freq=torch.transpose(self.freq,0,1)
+#        #print(self.freq)
+#        params=torch.empty((m**k),**factory_kwargs)
+#        params=torch.unsqueeze(params, 0)
+#        self.alphas = nn.Parameter(params)
+#        #print(self.alphas)
+#        self.reset_parameters()
+#
+#    def reset_parameters(self):
+#        nn.init.kaiming_uniform_(self.alphas, a=math.sqrt(5))
+#
+#    def forward(self, x):
+#        #exp=torch.dot(x,self.freq)
+#        y=[]
+#        exp=torch.mm(x,self.freq)
+#        #print("exponent",exp)
+#        o_sp=torch.cos((torch.tensor(math.pi)/(self.m-1))*exp)
+#        #print("after exponential",o_sp)
+#        y_sp=torch.mm(self.alphas,o_sp)
+#        y.append(y_sp)
+#        #print("result",y_sp)
+#        return y_sp
+#class SP_pytorch(nn.Module):
+#    def __init__(self, m, k, device=None, dtype=None):
+#        factory_kwargs = {'device': device, 'dtype': dtype}
+#        super(SP_pytorch, self).__init__()
+#        self.m = m
+#        self.k = k
+#        self.freq=torch.from_numpy(frequencies_gen(m,k))
+#        self.freq=self.freq.type(torch.cuda.FloatTensor)
+#        self.freq=torch.transpose(self.freq,0,1)
+#        #print(self.freq)
+#        params=torch.empty((m**k),**factory_kwargs)
+#        params=torch.unsqueeze(params, 0)
+#        self.alphas = nn.Parameter(params)
+#        #print(self.alphas)
+#        self.reset_parameters()
+#
+#    def reset_parameters(self):
+#        nn.init.kaiming_uniform_(self.alphas, a=math.sqrt(5))
+#
+#    def forward(self, x):
+#        exp=torch.dot(x,self.freq)
+#        y=[]
+#        exp=torch.mm(x,self.freq)
+#        #print("exponent",exp)
+#        o_sp=torch.exp((torch.tensor(math.pi)*j/(self.m-1))*exp)
+#        #print("after exponential",o_sp)
+#        y_sp=torch.mm(self.alphas,o_sp)
+#        y.append(y_sp)
+#        #print("result",y_sp)
+#        return y_sp
