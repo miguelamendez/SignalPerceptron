@@ -100,21 +100,29 @@ inputs = inputs.type(torch.FloatTensor)
 t1 = time.time()
 pred1=sp_np.forward(inputs_np)
 elapsed1 = time.time() - t1
+timer1=Timer(sp_np.forward,inputs_np)
 t2 = time.time()
 pred2=rsp_np.forward(inputs_np)
 elapsed2 = time.time() - t2
+timer2=Timer(rsp_np.forward,inputs_np)
 t3 = time.time()
 pred3=rsp(inputs) 
 elapsed3 = time.time() - t3
+timer3=Timer(rsp,inputs)
 t4 = time.time()
 pred4=fsp(inputs)
 elapsed4 = time.time() - t4
+timer4=Timer(fsp,inputs)
 t5 = time.time()
 pred5=mlp(inputs)
 elapsed5 = time.time() - t5
+timer5=Timer(mlp,inputs)
 print("Forward time for model that learns a function from FS:")
 print("SP_np \t RSP_np \t RSP \t FSP \t MLP")
 print(elapsed1,"\t",elapsed2,"\t",elapsed3,"\t",elapsed4,"\t",elapsed5)
+print("Forward time for model that learns all FS Timer class:")
+print("SP_np \t RSP_np \t RSP \t FSP \t MLP")
+print(timer1.mean(),"\t",timer2.mean(),"\t",timer3.mean(),"\t",timer4.mean(),"\t",timer5.mean())
 #Profiler(Only Pytorch)------------------------------------
 print("Forward time for model that learns a function from FS Profiler:")
 with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
@@ -138,21 +146,29 @@ inputs = inputs.type(torch.FloatTensor)
 t1 = time.time()
 pred1=sp_np_mh.forward(inputs_np)
 elapsed1 = time.time() - t1
+timer1=Timer(sp_np_mh.forward,inputs_np)
 t2 = time.time()
 pred2=rsp_np_mh.forward(inputs_np)
 elapsed2 = time.time() - t2
+timer2=Timer(rsp_np_mh.forward,inputs_np)
 t3 = time.time()
 pred3=rsp_mh(inputs) 
 elapsed3 = time.time() - t3
+timer3=Timer(rsp_mh,inputs)
 t4 = time.time()
 pred4=fsp_mh(inputs)
 elapsed4 = time.time() - t4
+timer4=Timer(fsp_mh,inputs)
 t5 = time.time()
 pred5=mlp_mh(inputs)
 elapsed5 = time.time() - t5
+timer5=Timer(mlp_mh,inputs)
 print("Forward time for model that learns all FS:")
 print("SP_np \t RSP_np \t RSP \t FSP \t MLP")
 print(elapsed1,"\t",elapsed2,"\t",elapsed3,"\t",elapsed4,"\t",elapsed5)
+print("Forward time for model that learns all FS Timer class:")
+print("SP_np \t RSP_np \t RSP \t FSP \t MLP")
+print(timer1.mean(),"\t",timer2.mean(),"\t",timer3.mean(),"\t",timer4.mean(),"\t",timer5.mean())
 #--------------------------------------------
 #Profiler(Only Pytorch)------------------------------------
 print("Forward time for model that learns all FS Profiler:")
@@ -182,7 +198,7 @@ def full_analysis_train():
     print("Single function learning")
     #Training Hyperparameters:
     #----------------------------------------------------------
-    epochs = 100
+    epochs = 5
     lr = .1
     optimizer_name="sgd"
     loss_fn_1 = nn.MSELoss()
@@ -198,20 +214,25 @@ def full_analysis_train():
     print("Epochs: ",epochs," lr: ",lr," optimizer: ",optimizer_name)
     #----------------------------------------------------------
     print("Signal Perceptron numpy")
-    total_hist1,final_loss1,learned_epochs1=train_numpy(x_train=x,y_train=y,model=sp_np,epochs=epochs,learning_rate=lr,loss_fn=MSE_Loss)
-    print(final_loss1,learned_epochs1)
+    total_hist1,final_loss1,learned_epochs1,time_backward1=train_numpy(x_train=x,y_train=y,model=sp_np,epochs=epochs,learning_rate=lr,loss_fn=MSE_Loss)
+    con1=np.concatenate(time_backward1)
+    print(final_loss1,learned_epochs1,"\n Backward Time: ",np.mean(con1))
     print("Real Signal Perceptron numpy")
-    total_hist2,final_loss2,learned_epochs2=train_numpy(x_train=x,y_train=y,model=rsp_np,epochs=epochs,learning_rate=lr,loss_fn=MSE_Loss)
-    print(final_loss2,learned_epochs2)
+    total_hist2,final_loss2,learned_epochs2,time_backward2=train_numpy(x_train=x,y_train=y,model=rsp_np,epochs=epochs,learning_rate=lr,loss_fn=MSE_Loss)
+    con2=np.concatenate(time_backward2)
+    print(final_loss2,learned_epochs2,"\n Backward Time: ",np.mean(con2))
     print("Real Signal Perceptron pytorch")
-    total_hist3,final_loss3,learned_epochs3=train_pytorch(x_train=x_train,y_train=y_train,model=rsp,PATH=PATH2,epochs=epochs,optimizer=optimizer2,loss_fn=loss_fn_1)
-    print(final_loss3,learned_epochs3)
+    total_hist3,final_loss3,learned_epochs3,time_backward3=train_pytorch(x_train=x_train,y_train=y_train,model=rsp,PATH=PATH2,epochs=epochs,optimizer=optimizer2,loss_fn=loss_fn_1)
+    con3=np.concatenate(time_backward3)
+    print(final_loss3,learned_epochs3,"\n Backward Time: ",np.mean(con3))
     print("Fourier Signal Perceptron pytorch")
-    total_hist4,final_loss4,learned_epochs4=train_pytorch(x_train=x_train,y_train=y_train,model=fsp,PATH=PATH1,epochs=epochs,optimizer=optimizer1,loss_fn=loss_fn_2)
-    print(final_loss4,learned_epochs4)
+    total_hist4,final_loss4,learned_epochs4,time_backward4=train_pytorch(x_train=x_train,y_train=y_train,model=fsp,PATH=PATH1,epochs=epochs,optimizer=optimizer1,loss_fn=loss_fn_2)
+    con4=np.concatenate(time_backward4)
+    print(final_loss4,learned_epochs4,"\n Backward Time: ",np.mean(con4))
     print(" Multilayer Perceptron pytorch")
-    total_hist5,final_loss5,learned_epochs5=train_pytorch(x_train=x_train,y_train=y_train,model=mlp,PATH=PATH3,epochs=epochs,optimizer=optimizer3,loss_fn=loss_fn_3)
-    print(final_loss5,learned_epochs5)
+    total_hist5,final_loss5,learned_epochs5,time_backward5=train_pytorch(x_train=x_train,y_train=y_train,model=mlp,PATH=PATH3,epochs=epochs,optimizer=optimizer3,loss_fn=loss_fn_3)
+    con5=np.concatenate(time_backward5)
+    print(final_loss5,learned_epochs5,"\n Backward Time: ",np.mean(con5))
     #Ploting loss for trained networks.
     title1='Training loss of '+str(len(total_hist1))+' functions of the m:'+str(m)+',k:'+str(k)+' function space with SP_np'
     title2='Training loss of '+str(len(total_hist2))+' functions of the m:'+str(m)+',k:'+str(k)+' function space with RSP_np'
@@ -253,25 +274,25 @@ def full_analysis_train():
     #----------------------------------------------------------
     all_mh=[]
     print("Signal Perceptron numpy")
-    total_hist6,final_loss6,learned_epochs6=train_mh_numpy(x_train=x,y_train=y,model=sp_np_mh,epochs=epochs,learning_rate=lr,loss_fn=MSE_Loss)
+    total_hist6,final_loss6,learned_epochs6,time_backward6=train_mh_numpy(x_train=x,y_train=y,model=sp_np_mh,epochs=epochs,learning_rate=lr,loss_fn=MSE_Loss)
     a=total_hist6[0]
     all_mh.append(a)
-    print(final_loss6,learned_epochs6)
+    print(final_loss6,learned_epochs6,"\n Backward Time: ",np.mean(time_backward6))
     print("Real Signal Perceptron numpy")
-    total_hist7,final_loss7,learned_epochs7=train_mh_numpy(x_train=x,y_train=y,model=rsp_np_mh,epochs=epochs,learning_rate=lr,loss_fn=MSE_Loss)
+    total_hist7,final_loss7,learned_epochs7,time_backward7=train_mh_numpy(x_train=x,y_train=y,model=rsp_np_mh,epochs=epochs,learning_rate=lr,loss_fn=MSE_Loss)
     a=total_hist7[0]
     all_mh.append(a)
-    print(final_loss7,learned_epochs7)
+    print(final_loss7,learned_epochs7,"\n Backward Time: ",np.mean(time_backward7))
     print("Real Signal Perceptron pytorch")
-    total_hist8,final_loss8,learned_epochs8=train_mh_pytorch(x_train=x_train,y_train=y_train,model=rsp_mh,PATH=PATH5,epochs=epochs,optimizer=optimizer2,loss_fn=loss_fn_pt1)
+    total_hist8,final_loss8,learned_epochs8,time_backward8=train_mh_pytorch(x_train=x_train,y_train=y_train,model=rsp_mh,PATH=PATH5,epochs=epochs,optimizer=optimizer2,loss_fn=loss_fn_pt1)
     a=total_hist8[0]
     all_mh.append(a)
-    print(final_loss8,learned_epochs8)
+    print(final_loss8,learned_epochs8,"\n Backward Time: ",np.mean(time_backward8))
     print("Fourier Signal Perceptron pytorch")
-    total_hist9,final_loss9,learned_epochs9=train_mh_pytorch(x_train=x_train,y_train=y_train,model=fsp_mh,PATH=PATH4,epochs=epochs,optimizer=optimizer1,loss_fn=loss_fn_pt2)
+    total_hist9,final_loss9,learned_epochs9,time_backward9=train_mh_pytorch(x_train=x_train,y_train=y_train,model=fsp_mh,PATH=PATH4,epochs=epochs,optimizer=optimizer1,loss_fn=loss_fn_pt2)
     a=total_hist9[0]
     all_mh.append(a)
-    print(final_loss9,learned_epochs9)
+    print(final_loss9,learned_epochs9,"\n Backward Time: ",np.mean(time_backward9))
     print(" Multilayer Perceptron pytorch")
     total_hist,final_loss,learned_epochs=train_mh_pytorch(x_train=x_train,y_train=y_train,model=mlp_mh,PATH=PATH6,epochs=epochs,optimizer=optimizer3,loss_fn=loss_fn_pt3)
     a=total_hist[0]

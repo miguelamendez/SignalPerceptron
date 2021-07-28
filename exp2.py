@@ -101,24 +101,34 @@ inputs=train_features[0]
 inputs=inputs.to(device)
 print(train_features.size())
 print(inputs.size())
+#Warmup
 t2 = time.time()
 pred2=mlp1(inputs)
 elapsed2 = time.time() - t2
+timer2=Timer(mlp1,inputs)
+############
 t22 = time.time()
 pred22=mlp1(inputs)
 elapsed22 = time.time() - t22
+timer22=Timer(mlp1,inputs)
 t3 = time.time()
 pred3=mlp2(inputs) 
 elapsed3 = time.time() - t3
+timer3=Timer(mlp2,inputs)
 t11 = time.time()
 pred1=fsp128(inputs)
 elapsed11 = time.time() - t11
+timer11=Timer(fsp128,inputs)
 t1 = time.time()
 pred1=fsp(inputs)
 elapsed1 = time.time() - t1
+timer1=Timer(fsp,inputs)
 print("Forward time for MNIST models:")
 print("FSP128 \t FSP512 \t MLP 1 hidden  \t MLP 2 hidden")
 print(elapsed11,"\t",elapsed1,"\t",elapsed22,"\t",elapsed3)
+print("Forward time for MNIST models FS Timer class:")
+print("FSP128 \t FSP512 \t MLP 1 hidden  \t MLP 2 hidden")
+print(timer11.mean(),"\t",timer1.mean(),"\t",timer22.mean(),"\t",timer3.mean())
 #Profiler(Only Pytorch)------------------------------------
 
 
@@ -286,7 +296,7 @@ print("MLP 1 hidden layer Signal Perceptron")
 optimal_epoch=[]
 for t in range(epochs):
     print(f"Epoch {t+1}\n-------------------------------")
-    loss1=train_mnist(train_f_mnist_dataloader, mlp1, loss_fn, optimizer2,device)
+    loss1,time_backprop=train_mnist(train_f_mnist_dataloader, mlp1, loss_fn, optimizer2,device)
     accuracy,loss2=test_mnist(test_f_mnist_dataloader, mlp1, loss_fn,device)
     if not bool(optimal_epoch):
         optimal_epoch=[t,accuracy, loss2,loss1]
@@ -300,15 +310,20 @@ print(optimal_epoch)
 
 print("MLP 2 hidden layer Signal Perceptron")
 optimal_epoch=[]
+time_backprop=[]
 for t in range(epochs):
     print(f"Epoch {t+1}\n-------------------------------")
-    loss1=train_mnist(train_f_mnist_dataloader, mlp2, loss_fn, optimizer3,device)
+    loss1,tb=train_mnist(train_f_mnist_dataloader, mlp2, loss_fn, optimizer3,device)
     accuracy,loss2=test_mnist(test_f_mnist_dataloader, mlp2, loss_fn,device)
     if not bool(optimal_epoch):
         optimal_epoch=[t,accuracy, loss2,loss1]
     if bool(optimal_epoch):
         if optimal_epoch[2]>loss2:
             optimal_epoch=[t,accuracy, loss2,loss1]
+    time_backprop.append(tb)
+print("Backprop time:")
+con1=np.concatenate(time_backprop)
+print(con1)
 print("Final  epoch:")
 print(epochs,accuracy,loss2,loss1)
 print("Optimal  epoch:")

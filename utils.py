@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
+import time
 
 """This utilities are for data preprocessing"""
 def int_to_bin(arr,num_bits=8):
@@ -39,7 +39,19 @@ def int_to_bin_dataset(dataset,num_bits=8):
     bin_train_array=np.stack(bin_train_list)
     return bin_train_array
 
-
+""" This utilities are for getting running times"""
+class Timer(object):
+    def __init__(self,function,inputs=[],iterations=1000):
+        self.time_hist= np.zeros(iterations)
+        for i in range(0,iterations):
+            start = time.time()
+            output=function(inputs)
+            elapsed = time.time() - start
+            self.time_hist[i]=elapsed
+    def mean(self):
+        return np.mean(self.time_hist)
+    def std(self):
+        return np.std(self.time_hist)
 """This utilities are for ploting loss"""
 def functions_plot(data,title,path=[],labels=[]):
     print("dse",len(data))
