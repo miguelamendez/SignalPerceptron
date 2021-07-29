@@ -30,7 +30,7 @@ def train_pytorch(x_train,y_train,model,PATH,epochs,optimizer,loss_fn):
                 if loss<=.001:
                     learned_epoch.append(j)
         learned_epochs.append(learned_epoch)
-        final_loss.append(loss)
+        final_loss.append(loss.detach().numpy())
         total_hist.append(history_train)
         total_time.append(time_backward)
     return total_hist,final_loss,learned_epochs,total_time
@@ -83,11 +83,11 @@ def train_mh_pytorch(x_train,y_train,model,PATH,epochs,optimizer,loss_fn):
         optimizer.step()
         end = time.time()-start
         time_backward[j]=end
-        history_train.append([j,loss])
+        history_train.append([j,loss.detach().numpy()])
         if not bool(learned_epoch):
             if loss<=.001:
                 learned_epoch.append(j)
-    final_loss=loss
+    final_loss=loss.detach().numpy()
     total_hist.append(history_train)
     return total_hist,final_loss,learned_epoch,time_backward
 
