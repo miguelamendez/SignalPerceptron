@@ -294,10 +294,10 @@ def full_analysis_train():
     all_mh.append(a)
     print(final_loss9,learned_epochs9,"\n Backward Time: ",np.mean(time_backward9))
     print(" Multilayer Perceptron pytorch")
-    total_hist,final_loss,learned_epochs=train_mh_pytorch(x_train=x_train,y_train=y_train,model=mlp_mh,PATH=PATH6,epochs=epochs,optimizer=optimizer3,loss_fn=loss_fn_pt3)
+    total_hist,final_loss,learned_epochs,time_backward=train_mh_pytorch(x_train=x_train,y_train=y_train,model=mlp_mh,PATH=PATH6,epochs=epochs,optimizer=optimizer3,loss_fn=loss_fn_pt3)
     a=total_hist[0]
     all_mh.append(a)
-    print(final_loss,learned_epochs)
+    print(final_loss,learned_epochs,"\n Backward Time: ",np.mean(time_backward9))
     #Ploting loss for trained networks. 
     title1='Training loss of '+str(len(total_hist1))+' functions of the m:'+str(m)+',k:'+str(k)+' function space with SP_np'
     title2='Training loss of '+str(len(total_hist2))+' functions of the m:'+str(m)+',k:'+str(k)+' function space with RSP_np'
