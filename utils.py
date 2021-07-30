@@ -102,26 +102,26 @@ def latex_table(description,label,columns_names,table_data):
     print("\vskip 0.15in")
     print("\scalebox{1}{")
     a=[]
-    for i in range(0,len(colum_names))
+    for i in range(0,len(columns_names)):
         a=a+"c"
     print("\begin{tabular}{",a,"}")
     print("\toprule")
     a=[]
-    for j in colum_names:
+    for j in columns_names:
         a=a +j +"&"
-    a[:-1]="\"
-    a=a+"\"
+    a[:-1] = "\\"
+    a=a + "\\"
     print(a)
     print("\midrule")
     for i in table_data:
         a=[]
         for j in i:
             a=a +j +"&"
-        a[:-1]="\"
-        a=a+"\"
+        a[:-1]="\\"
+        a=a+"\\"
         print(a)
-    print("\bottomrule"
-    print("\end{tabular} }"
+    print("\bottomrule")
+    print("\end{tabular} }")
     print("\label{table:",label,"}")
     print("\end{table}")
 
