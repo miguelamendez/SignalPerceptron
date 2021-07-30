@@ -60,31 +60,31 @@ torch.save(mlp_mh.state_dict(),PATH6)
 #Printing Learnable Parameters
 ################################################################################################################################
 
-sp_np_params = sp_np.count()
-rsp_np_params = rsp_np.count()
+sp_np_params1 = sp_np.count()
+rsp_np_params1 = rsp_np.count()
 fsp_parameters = filter(lambda p: p.requires_grad, fsp.parameters())
-fsp_params = sum([np.prod(p.size()) for p in fsp_parameters])
+fsp_params1 = sum([np.prod(p.size()) for p in fsp_parameters])
 rsp_parameters = filter(lambda p: p.requires_grad, rsp.parameters())
-rsp_params = sum([np.prod(p.size()) for p in rsp_parameters])
+rsp_params1 = sum([np.prod(p.size()) for p in rsp_parameters])
 mlp_parameters = filter(lambda p: p.requires_grad, mlp.parameters())
-mlp_params = sum([np.prod(p.size()) for p in mlp_parameters])
+mlp_params1 = sum([np.prod(p.size()) for p in mlp_parameters])
 
 print("Learnable Parameters for model that learns a function from FS:")
 print("SP_np \t RSP_np \t RSP \t FSP \t MLP")
-print(sp_np_params,"\t",rsp_np_params,"\t",rsp_params,"\t",fsp_params,"\t",mlp_params)
+print(sp_np_params1,"\t",rsp_np_params1,"\t",rsp_params1,"\t",fsp_params1,"\t",mlp_params1)
 
-sp_np_params = sp_np_mh.count()
-rsp_np_params = rsp_np_mh.count()
+sp_np_params2 = sp_np_mh.count()
+rsp_np_params2 = rsp_np_mh.count()
 fsp_parameters = filter(lambda p: p.requires_grad, fsp_mh.parameters())
-fsp_params = sum([np.prod(p.size()) for p in fsp_parameters])
+fsp_params2 = sum([np.prod(p.size()) for p in fsp_parameters])
 rsp_parameters = filter(lambda p: p.requires_grad, rsp_mh.parameters())
-rsp_params = sum([np.prod(p.size()) for p in rsp_parameters])
+rsp_params2 = sum([np.prod(p.size()) for p in rsp_parameters])
 mlp_parameters = filter(lambda p: p.requires_grad, mlp_mh.parameters())
-mlp_params = sum([np.prod(p.size()) for p in mlp_parameters])
+mlp_params2 = sum([np.prod(p.size()) for p in mlp_parameters])
 
 print("Learnable Parameters for model that learns all FS:")
 print("SP_np \t RSP_np \t RSP \t FSP \t MLP")
-print(sp_np_params,"\t",rsp_np_params,"\t",rsp_params,"\t",fsp_params,"\t",mlp_params)
+print(sp_np_params2,"\t",rsp_np_params2,"\t",rsp_params2,"\t",fsp_params2,"\t",mlp_params2)
 
 #################################################################################################################################
 #Memory:
@@ -100,29 +100,29 @@ inputs = inputs.type(torch.FloatTensor)
 t1 = time.time()
 pred1=sp_np.forward(inputs_np)
 elapsed1 = time.time() - t1
-timer1=Timer(sp_np.forward,inputs_np)
+timer11=Timer(sp_np.forward,inputs_np)
 t2 = time.time()
 pred2=rsp_np.forward(inputs_np)
 elapsed2 = time.time() - t2
-timer2=Timer(rsp_np.forward,inputs_np)
+timer21=Timer(rsp_np.forward,inputs_np)
 t3 = time.time()
 pred3=rsp(inputs) 
 elapsed3 = time.time() - t3
-timer3=Timer(rsp,inputs)
+timer31=Timer(rsp,inputs)
 t4 = time.time()
 pred4=fsp(inputs)
 elapsed4 = time.time() - t4
-timer4=Timer(fsp,inputs)
+timer41=Timer(fsp,inputs)
 t5 = time.time()
 pred5=mlp(inputs)
 elapsed5 = time.time() - t5
-timer5=Timer(mlp,inputs)
+timer51=Timer(mlp,inputs)
 print("Forward time for model that learns a function from FS:")
 print("SP_np \t RSP_np \t RSP \t FSP \t MLP")
 print(elapsed1,"\t",elapsed2,"\t",elapsed3,"\t",elapsed4,"\t",elapsed5)
 print("Forward time for model that learns all FS Timer class:")
 print("SP_np \t RSP_np \t RSP \t FSP \t MLP")
-print(timer1.mean(),"\t",timer2.mean(),"\t",timer3.mean(),"\t",timer4.mean(),"\t",timer5.mean())
+print(timer11.mean(),"\t",timer21.mean(),"\t",timer31.mean(),"\t",timer41.mean(),"\t",timer51.mean())
 #Profiler(Only Pytorch)------------------------------------
 print("Forward time for model that learns a function from FS Profiler:")
 with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
@@ -248,6 +248,7 @@ def full_analysis_train():
     #image_path3="data/experiments/exp1/run1/adam/rsp_pt"
     #image_path4="data/experiments/exp1/run1/adam/fsp_pt"
     #image_path5="data/experiments/exp1/run1/adam/mlp_pt"
+
     functions_plot(total_hist1,title1,image_path1)
     functions_plot(total_hist2,title2,image_path2)
     functions_plot(total_hist3,title3,image_path3)
@@ -326,4 +327,25 @@ def full_analysis_train():
     #################################################################################################################################
     #################################################################################################################################
     #################################################################################################################################
+    print("Properties summary 1")
+    print("Model: SP_np \t RSP_np \t RSP \t FSP \t MLP")
+    print("Params:",sp_np_params1,"\t",rsp_np_params1,"\t",rsp_params1,"\t",fsp_params1,"\t",mlp_params1)
+    print("Avg Forward:",timer11.mean()*1000,"\t",timer21.mean()*1000,"\t",timer31.mean()*1000,"\t",timer41.mean()*1000,"\t",timer51.mean()*1000)
+    print("Avg Backward:",np.mean(con1)*1000,"\t",np.mean(con2)*1000,"\t",np.mean(con3)*1000,"\t",np.mean(con4)*1000,"\t",np.mean(con5)*1000)
+    print("Training summary 1")
+    print("Model: SP_np \t RSP_np \t RSP \t FSP \t MLP")
+    print("Avg Final loss:")
+    print("Avg Learned epoch:")
+    print("Number of learned functions:")
+    print("---------------------------------------------------------------------------------------------------------")
+    print("---------------------------------------------------------------------------------------------------------")
+    print("Properties summary 2")
+    print("Model: SP_np_mh \t RSP_np_mh \t RSP_mh \t FSP_mh \t MLP_mh")
+    print("Params:",sp_np_params2,"\t",rsp_np_params2,"\t",rsp_params2,"\t",fsp_params2,"\t",mlp_params2)
+    print("Avg Forward:",timer1.mean()*1000,"\t",timer2.mean()*1000,"\t",timer3.mean()*1000,"\t",timer4.mean()*1000,"\t",timer5.mean()*1000)
+    print("Avg Backward:",np.mean(time_backward6)*1000,"\t",np.mean(time_backward7)*1000,"\t",np.mean(time_backward8)*1000,"\t",np.mean(time_backward9)*1000,"\t",np.mean(time_backward)*1000)
+    print("Training sumary 2")
+    print("Model: SP_np \t RSP_np \t RSP \t FSP \t MLP")
+    print("Final loss:",final_loss6,"\t",final_loss7,"\t",final_loss8,"\t",final_loss9,"\t",final_loss)
+    print("Learned epoch:",learned_epochs6,"\t",learned_epochs7,"\t",learned_epochs8,"\t",learned_epochs9,"\t",learned_epochs)
 full_analysis_train()
