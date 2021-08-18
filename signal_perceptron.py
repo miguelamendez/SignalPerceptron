@@ -88,7 +88,7 @@ def SP_Matrix(m,k):
         
     return A 
 
-def SP_r_Matrix(m,k):
+def RSP_Matrix(m,k):
     aix=np.zeros([k]); #Array of indexes (to order them)
     aiw=np.zeros([k]); #Array of indexes (to order them)
     ni=m**k   #Number of Iterations
@@ -206,6 +206,8 @@ class SP_numpy(object):
         return self.alphas.size
     def reset_params(self):
         self.alphas=self.init_alphas
+    def load_params(self,alphas):
+        self.alphas=alphas
 
 class RSP_numpy(object):
     def __init__(self,m,k,heads=1):
@@ -230,6 +232,8 @@ class RSP_numpy(object):
         return self.alphas.size
     def reset_params(self):
         self.alphas=self.init_alphas
+    def load_params(self,alphas):
+        self.alphas=alphas
 
 class SP_pytorch(nn.Module):
     def __init__(self, m, k, heads=1,device=None, dtype=None):
@@ -241,13 +245,17 @@ class SP_pytorch(nn.Module):
         self.freq.weight = torch.nn.Parameter(params)
         for param in self.freq.parameters():
             param.requires_grad = False
-        self.alphas= nn.Linear(m**k, heads,bias=False)
-
+        self.alphas_real= nn.Linear(m**k, heads,bias=False)
+        self.alphas_imag= nn.Linear(m**k, heads,bias=False)
     def forward(self, x):
         freq=self.freq(x)
-        signals=torch.exp((torch.tensor(math.pi)*j/(self.m-1))*freq)
-        x=self.alphas(signals)
-        return x
+        signals_real=torch.cos((torch.tensor(math.pi)/(self.m-1))*freq)
+        signals_imag=torch.sin((torch.tensor(math.pi)/(self.m-1))*freq)
+        real=self.alphas_real(signals_real)-self.alphas_imag(signals_imag)
+        imag=self.alphas_real(signals_imag)+self.alphas_imag(signals_real)
+        x=torch.cat((real,imag),1)
+        z=torch.view_as_complex(x)
+        return 
 
 
 class RSP_pytorch(nn.Module):

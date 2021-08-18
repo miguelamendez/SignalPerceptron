@@ -75,8 +75,9 @@ def functions_plot(data,title,path=[],labels=[]):
         plt.show()
     else:
         plt.savefig(path)
-        plt.show()
-        
+        plt.show(block=False)
+        plt.pause(1)
+        plt.close()
 
 def single_function_plot(data,title):
     x_axis=[]
@@ -93,6 +94,9 @@ def single_function_plot(data,title):
     plt.legend()
     plt.show()
 
+<<<<<<< HEAD
+"""Utilis for measuring models properties"""
+=======
 """Utilis for ploting models properties"""
 def latex_table(description,label,columns_names,table_data):
     print("\begin{table}[h]")
@@ -125,3 +129,4 @@ def latex_table(description,label,columns_names,table_data):
     print("\label{table:",label,"}")
     print("\end{table}")
 
+>>>>>>> 86e573259a9b3cf4a28a4d16a69a8cb76c380d84

@@ -5,6 +5,8 @@ import numpy as np
 import signal_perceptron as sp
 from utils import *
 import time
+
+#Train loops for first set of experiments (check exp1.py)
 def train_pytorch(x_train,y_train,model,PATH,epochs,optimizer,loss_fn):
     total_hist=[]
     final_loss=[]
@@ -33,7 +35,11 @@ def train_pytorch(x_train,y_train,model,PATH,epochs,optimizer,loss_fn):
         final_loss.append(loss.detach().numpy())
         total_hist.append(history_train)
         total_time.append(time_backward)
-    return total_hist,final_loss,learned_epochs,total_time
+    l=0
+    for i in final_loss:
+        l=l+i
+    avg_fl=l/len(final_loss)
+    return total_hist,avg_fl,learned_epochs,total_time
 
 
 def train_numpy(x_train,y_train,model,epochs,learning_rate,loss_fn):
@@ -64,8 +70,13 @@ def train_numpy(x_train,y_train,model,epochs,learning_rate,loss_fn):
         total_hist.append(history_train)
         total_time.append(time_backward)
     #print(total_hist[1])
-    return total_hist,final_loss,learned_epochs,total_time
+    l=0
+    for i in final_loss:
+        l=l+i
+    avg_fl=l/len(final_loss)
+    return total_hist,avg_fl,learned_epochs,total_time
 
+#Train loops for second set of experiments (check exp2.py)
 def train_mh_pytorch(x_train,y_train,model,PATH,epochs,optimizer,loss_fn):
     y_train=torch.transpose(y_train, 0, 1)
     total_hist=[]
@@ -151,3 +162,26 @@ def test_mnist(dataloader, model, loss_fn,device):
     correct /= size
     print(f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
     return (100*correct) ,test_loss
+
+#Train loops for third set of experiments (check exp3.py)
+
+def train_linear_numpy(y_train,sp_matrix):
+    alphas=[]
+    for i in y_train:
+        alphas_i = np.linalg.inv(sp_matrix).dot(i)
+        alphas.append(alphas_i)
+    return alphas
+
+def test_linear_numpy(x_test,y_test,model,alphas,loss_fn):
+    total_loss=[]
+    for i in range(0,len(y_test)):
+        model.load_params(alphas[i])
+        test_loss = 0
+        y=y_test[i]
+        for j in range(0,len(x_test)):
+            pred=model.forward(j)
+            test_loss += loss_fn(pred, y[j])
+            #correct += ( np.sqrt(pred - y)<0.0001).type(np.float).sum().item()
+        test_loss /= len(x_test)
+        total_loss.append(test_loss)
+    return total_loss

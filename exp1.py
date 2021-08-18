@@ -8,198 +8,199 @@ from data_load import *
 from train import *
 import os
 from utils import *
+def full_analysis_train(epochs,lr,titlews):
+    #Functional Space Hyperparameters
+    m=2
+    k=2
+    sample=[]
 
-#Functional Space Hyperparameters
-m=2
-k=2
-sample=[]
+    #Loading datasets:
+    #######################################################################################################################
+    #Generating Dataset
+    x,y=data_gen(m,k,sample)
+    print(y)
+    #print(x,y)
+    x_train=torch.tensor(x)
+    x_train = x_train.type(torch.FloatTensor)
+    y_train=torch.tensor(y)
+    y_train = y_train.type(torch.FloatTensor)
 
-#Loading datasets:
-#######################################################################################################################
-#Generating Dataset
-x,y=data_gen(m,k,sample)
-#print(x,y)
-x_train=torch.tensor(x)
-x_train = x_train.type(torch.FloatTensor)
-y_train=torch.tensor(y)
-y_train = y_train.type(torch.FloatTensor)
+    #Loading Models:
+    ################################################################################################################################
+    #Single functions:
+    sp_np= SP_numpy(m,k,1)
+    rsp_np= RSP_numpy(m,k,1)
+    fsp= FSP_pytorch(m**k,k,1)
+    rsp= RSP_pytorch(m,k,1)
+    mlp= MLP_pytorch(m**k,k,1)
+    PATH1="data/models/idm_RSP.pt"
+    torch.save(fsp.state_dict(),PATH1)
+    PATH2="data/models/idm_FSP.pt"
+    torch.save(rsp.state_dict(),PATH2)
+    PATH3="data/models/idm_MLP.pt"
+    torch.save(mlp.state_dict(),PATH3)
+    #Multiple functions:
+    heads=m**(m**k) #For learning all functions from the function_space
+    #heads=4
+    sp_np_mh= SP_numpy(m,k,heads)
+    rsp_np_mh= RSP_numpy(m,k,heads)
+    fsp_mh= FSP_pytorch(m**k,k,heads)
+    rsp_mh= RSP_pytorch(m,k,heads)
+    mlp_mh= MLP_pytorch(m**k,k,heads)
+    PATH4="data/models/idm_RSP_mh.pt"
+    torch.save(fsp_mh.state_dict(),PATH4)
+    PATH5="data/models/idm_FSP_mh.pt"
+    torch.save(rsp_mh.state_dict(),PATH5)
+    PATH6="data/models/idm_MLP_mh.pt"
+    torch.save(mlp_mh.state_dict(),PATH6)
+    #MODEL PROPERTIES:
+    ##################################################################################################################################
+    ##################################################################################################################################
+    ##################################################################################################################################
 
-#Loading Models:
-################################################################################################################################
-#Single functions:
-sp_np= SP_numpy(m,k,1)
-rsp_np= RSP_numpy(m,k,1)
-fsp= FSP_pytorch(m**k,k,1)
-rsp= RSP_pytorch(m,k,1)
-mlp= MLP_pytorch(m**k,k,1)
-PATH1="data/models/idm_RSP.pt"
-torch.save(fsp.state_dict(),PATH1)
-PATH2="data/models/idm_FSP.pt"
-torch.save(rsp.state_dict(),PATH2)
-PATH3="data/models/idm_MLP.pt"
-torch.save(mlp.state_dict(),PATH3)
-#Multiple functions:
-heads=m**(m**k) #For learning all functions from the function_space
-#heads=4
-sp_np_mh= SP_numpy(m,k,heads)
-rsp_np_mh= RSP_numpy(m,k,heads)
-fsp_mh= FSP_pytorch(m**k,k,heads)
-rsp_mh= RSP_pytorch(m,k,heads)
-mlp_mh= MLP_pytorch(m**k,k,heads)
-PATH4="data/models/idm_RSP_mh.pt"
-torch.save(fsp_mh.state_dict(),PATH4)
-PATH5="data/models/idm_FSP_mh.pt"
-torch.save(rsp_mh.state_dict(),PATH5)
-PATH6="data/models/idm_MLP_mh.pt"
-torch.save(mlp_mh.state_dict(),PATH6)
-#MODEL PROPERTIES:
-##################################################################################################################################
-##################################################################################################################################
-##################################################################################################################################
+    #Printing Learnable Parameters
+    ################################################################################################################################
 
-#Printing Learnable Parameters
-################################################################################################################################
+    sp_np_params1 = sp_np.count()
+    rsp_np_params1 = rsp_np.count()
+    fsp_parameters = filter(lambda p: p.requires_grad, fsp.parameters())
+    fsp_params1 = sum([np.prod(p.size()) for p in fsp_parameters])
+    rsp_parameters = filter(lambda p: p.requires_grad, rsp.parameters())
+    rsp_params1 = sum([np.prod(p.size()) for p in rsp_parameters])
+    mlp_parameters = filter(lambda p: p.requires_grad, mlp.parameters())
+    mlp_params1 = sum([np.prod(p.size()) for p in mlp_parameters])
 
-sp_np_params1 = sp_np.count()
-rsp_np_params1 = rsp_np.count()
-fsp_parameters = filter(lambda p: p.requires_grad, fsp.parameters())
-fsp_params1 = sum([np.prod(p.size()) for p in fsp_parameters])
-rsp_parameters = filter(lambda p: p.requires_grad, rsp.parameters())
-rsp_params1 = sum([np.prod(p.size()) for p in rsp_parameters])
-mlp_parameters = filter(lambda p: p.requires_grad, mlp.parameters())
-mlp_params1 = sum([np.prod(p.size()) for p in mlp_parameters])
+    print("Learnable Parameters for model that learns a function from FS:")
+    print("SP_np \t RSP_np \t RSP \t FSP \t MLP")
+    print(sp_np_params1,"\t",rsp_np_params1,"\t",rsp_params1,"\t",fsp_params1,"\t",mlp_params1)
 
-print("Learnable Parameters for model that learns a function from FS:")
-print("SP_np \t RSP_np \t RSP \t FSP \t MLP")
-print(sp_np_params1,"\t",rsp_np_params1,"\t",rsp_params1,"\t",fsp_params1,"\t",mlp_params1)
+    sp_np_params2 = sp_np_mh.count()
+    rsp_np_params2 = rsp_np_mh.count()
+    fsp_parameters = filter(lambda p: p.requires_grad, fsp_mh.parameters())
+    fsp_params2 = sum([np.prod(p.size()) for p in fsp_parameters])
+    rsp_parameters = filter(lambda p: p.requires_grad, rsp_mh.parameters())
+    rsp_params2 = sum([np.prod(p.size()) for p in rsp_parameters])
+    mlp_parameters = filter(lambda p: p.requires_grad, mlp_mh.parameters())
+    mlp_params2 = sum([np.prod(p.size()) for p in mlp_parameters])
 
-sp_np_params2 = sp_np_mh.count()
-rsp_np_params2 = rsp_np_mh.count()
-fsp_parameters = filter(lambda p: p.requires_grad, fsp_mh.parameters())
-fsp_params2 = sum([np.prod(p.size()) for p in fsp_parameters])
-rsp_parameters = filter(lambda p: p.requires_grad, rsp_mh.parameters())
-rsp_params2 = sum([np.prod(p.size()) for p in rsp_parameters])
-mlp_parameters = filter(lambda p: p.requires_grad, mlp_mh.parameters())
-mlp_params2 = sum([np.prod(p.size()) for p in mlp_parameters])
+    print("Learnable Parameters for model that learns all FS:")
+    print("SP_np \t RSP_np \t RSP \t FSP \t MLP")
+    print(sp_np_params2,"\t",rsp_np_params2,"\t",rsp_params2,"\t",fsp_params2,"\t",mlp_params2)
 
-print("Learnable Parameters for model that learns all FS:")
-print("SP_np \t RSP_np \t RSP \t FSP \t MLP")
-print(sp_np_params2,"\t",rsp_np_params2,"\t",rsp_params2,"\t",fsp_params2,"\t",mlp_params2)
-
-#################################################################################################################################
-#Memory:
-#Not Implemented Jet
+    #################################################################################################################################
+    #Memory:
+    #Not Implemented Jet
 
 
-#Forward PassTime
-#################################################################################################################################
-#Single functions
-inputs_np = np.random.randint(m, size=(1,k))
-inputs = torch.tensor(inputs_np)
-inputs = inputs.type(torch.FloatTensor)
-t1 = time.time()
-pred1=sp_np.forward(inputs_np)
-elapsed1 = time.time() - t1
-timer11=Timer(sp_np.forward,inputs_np)
-t2 = time.time()
-pred2=rsp_np.forward(inputs_np)
-elapsed2 = time.time() - t2
-timer21=Timer(rsp_np.forward,inputs_np)
-t3 = time.time()
-pred3=rsp(inputs) 
-elapsed3 = time.time() - t3
-timer31=Timer(rsp,inputs)
-t4 = time.time()
-pred4=fsp(inputs)
-elapsed4 = time.time() - t4
-timer41=Timer(fsp,inputs)
-t5 = time.time()
-pred5=mlp(inputs)
-elapsed5 = time.time() - t5
-timer51=Timer(mlp,inputs)
-print("Forward time for model that learns a function from FS:")
-print("SP_np \t RSP_np \t RSP \t FSP \t MLP")
-print(elapsed1,"\t",elapsed2,"\t",elapsed3,"\t",elapsed4,"\t",elapsed5)
-print("Forward time for model that learns all FS Timer class:")
-print("SP_np \t RSP_np \t RSP \t FSP \t MLP")
-print(timer11.mean(),"\t",timer21.mean(),"\t",timer31.mean(),"\t",timer41.mean(),"\t",timer51.mean())
-#Profiler(Only Pytorch)------------------------------------
-print("Forward time for model that learns a function from FS Profiler:")
-with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
-    with record_function("model_inference:rsp"):
-        rsp(inputs)
-print(prof.key_averages().table(sort_by="cpu_time_total", row_limit=10))
-with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
-    with record_function("model_inference:fsp"):
-        fsp(inputs)
-print(prof.key_averages().table(sort_by="cpu_time_total", row_limit=10))
-with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
-    with record_function("model_inference:mlp"):
-        mlp(inputs)
-print(prof.key_averages().table(sort_by="cpu_time_total", row_limit=10))
+    #Forward PassTime
+    #################################################################################################################################
+    #Single functions
+    inputs_np = np.random.randint(m, size=(1,k))
+    inputs = torch.tensor(inputs_np)
+    inputs = inputs.type(torch.FloatTensor)
+    t1 = time.time()
+    pred1=sp_np.forward(inputs_np)
+    elapsed1 = time.time() - t1
+    timer11=Timer(sp_np.forward,inputs_np)
+    t2 = time.time()
+    pred2=rsp_np.forward(inputs_np)
+    elapsed2 = time.time() - t2
+    timer21=Timer(rsp_np.forward,inputs_np)
+    t3 = time.time()
+    pred3=rsp(inputs) 
+    elapsed3 = time.time() - t3
+    timer31=Timer(rsp,inputs)
+    t4 = time.time()
+    pred4=fsp(inputs)
+    elapsed4 = time.time() - t4
+    timer41=Timer(fsp,inputs)
+    t5 = time.time()
+    pred5=mlp(inputs)
+    elapsed5 = time.time() - t5
+    timer51=Timer(mlp,inputs)
+    print("Forward time for model that learns a function from FS:")
+    print("SP_np \t RSP_np \t RSP \t FSP \t MLP")
+    print(elapsed1,"\t",elapsed2,"\t",elapsed3,"\t",elapsed4,"\t",elapsed5)
+    print("Forward time for model that learns all FS Timer class:")
+    print("SP_np \t RSP_np \t RSP \t FSP \t MLP")
+    print(timer11.mean(),"\t",timer21.mean(),"\t",timer31.mean(),"\t",timer41.mean(),"\t",timer51.mean())
+    #Profiler(Only Pytorch)------------------------------------
+    print("Forward time for model that learns a function from FS Profiler:")
+    with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
+        with record_function("model_inference:rsp"):
+            rsp(inputs)
+    print(prof.key_averages().table(sort_by="cpu_time_total", row_limit=10))
+    with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
+        with record_function("model_inference:fsp"):
+            fsp(inputs)
+    print(prof.key_averages().table(sort_by="cpu_time_total", row_limit=10))
+    with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
+        with record_function("model_inference:mlp"):
+            mlp(inputs)
+    print(prof.key_averages().table(sort_by="cpu_time_total", row_limit=10))
 
-#Multiple functions:
-inputs_np =np.random.randint(m, size=(1,k))
-inputs = torch.tensor(inputs_np)
-inputs = inputs.type(torch.FloatTensor)
-#Time----------------------------------------
-t1 = time.time()
-pred1=sp_np_mh.forward(inputs_np)
-elapsed1 = time.time() - t1
-timer1=Timer(sp_np_mh.forward,inputs_np)
-t2 = time.time()
-pred2=rsp_np_mh.forward(inputs_np)
-elapsed2 = time.time() - t2
-timer2=Timer(rsp_np_mh.forward,inputs_np)
-t3 = time.time()
-pred3=rsp_mh(inputs) 
-elapsed3 = time.time() - t3
-timer3=Timer(rsp_mh,inputs)
-t4 = time.time()
-pred4=fsp_mh(inputs)
-elapsed4 = time.time() - t4
-timer4=Timer(fsp_mh,inputs)
-t5 = time.time()
-pred5=mlp_mh(inputs)
-elapsed5 = time.time() - t5
-timer5=Timer(mlp_mh,inputs)
-print("Forward time for model that learns all FS:")
-print("SP_np \t RSP_np \t RSP \t FSP \t MLP")
-print(elapsed1,"\t",elapsed2,"\t",elapsed3,"\t",elapsed4,"\t",elapsed5)
-print("Forward time for model that learns all FS Timer class:")
-print("SP_np \t RSP_np \t RSP \t FSP \t MLP")
-print(timer1.mean(),"\t",timer2.mean(),"\t",timer3.mean(),"\t",timer4.mean(),"\t",timer5.mean())
-#--------------------------------------------
-#Profiler(Only Pytorch)------------------------------------
-print("Forward time for model that learns all FS Profiler:")
-with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
-    with record_function("model_inference:rsp_mh"):
-        rsp_mh(inputs)
-print(prof.key_averages().table(sort_by="cpu_time_total", row_limit=10))
-with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
-    with record_function("model_inference:fsp_mh"):
-        fsp_mh(inputs)
-print(prof.key_averages().table(sort_by="cpu_time_total", row_limit=10))
-with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
-    with record_function("model_inference:mlp_mh"):
-        mlp_mh(inputs)
-print(prof.key_averages().table(sort_by="cpu_time_total", row_limit=10))
-#################################################################################################################################
-#Backward PassTime
-#################################################################################################################################
+    #Multiple functions:
+    inputs_np =np.random.randint(m, size=(1,k))
+    inputs = torch.tensor(inputs_np)
+    inputs = inputs.type(torch.FloatTensor)
+    #Time----------------------------------------
+    t1 = time.time()
+    pred1=sp_np_mh.forward(inputs_np)
+    elapsed1 = time.time() - t1
+    timer1=Timer(sp_np_mh.forward,inputs_np)
+    t2 = time.time()
+    pred2=rsp_np_mh.forward(inputs_np)
+    elapsed2 = time.time() - t2
+    timer2=Timer(rsp_np_mh.forward,inputs_np)
+    t3 = time.time()
+    pred3=rsp_mh(inputs) 
+    elapsed3 = time.time() - t3
+    timer3=Timer(rsp_mh,inputs)
+    t4 = time.time()
+    pred4=fsp_mh(inputs)
+    elapsed4 = time.time() - t4
+    timer4=Timer(fsp_mh,inputs)
+    t5 = time.time()
+    pred5=mlp_mh(inputs)
+    elapsed5 = time.time() - t5
+    timer5=Timer(mlp_mh,inputs)
+    print("Forward time for model that learns all FS:")
+    print("SP_np \t RSP_np \t RSP \t FSP \t MLP")
+    print(elapsed1,"\t",elapsed2,"\t",elapsed3,"\t",elapsed4,"\t",elapsed5)
+    print("Forward time for model that learns all FS Timer class:")
+    print("SP_np \t RSP_np \t RSP \t FSP \t MLP")
+    print(timer1.mean(),"\t",timer2.mean(),"\t",timer3.mean(),"\t",timer4.mean(),"\t",timer5.mean())
+    #--------------------------------------------
+    #Profiler(Only Pytorch)------------------------------------
+    print("Forward time for model that learns all FS Profiler:")
+    with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
+        with record_function("model_inference:rsp_mh"):
+            rsp_mh(inputs)
+    print(prof.key_averages().table(sort_by="cpu_time_total", row_limit=10))
+    with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
+        with record_function("model_inference:fsp_mh"):
+            fsp_mh(inputs)
+    print(prof.key_averages().table(sort_by="cpu_time_total", row_limit=10))
+    with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
+        with record_function("model_inference:mlp_mh"):
+            mlp_mh(inputs)
+    print(prof.key_averages().table(sort_by="cpu_time_total", row_limit=10))
+    #################################################################################################################################
+    #Backward PassTime
+    #################################################################################################################################
 
 
 #MODELS TRAINING
 #################################################################################################################################
 #################################################################################################################################
 #################################################################################################################################
-def full_analysis_train():
+
     print("Training models for space (m,k): (",m ,"," ,k,")")
     print("Single function learning")
     #Training Hyperparameters:
     #----------------------------------------------------------
-    epochs = 5
-    lr = .1
+    epochs = epochs
+    lr = lr
     optimizer_name="sgd"
     loss_fn_1 = nn.MSELoss()
     loss_fn_2 = nn.MSELoss()
@@ -239,7 +240,7 @@ def full_analysis_train():
     title3='Training loss of '+str(len(total_hist3))+' functions of the m:'+str(m)+',k:'+str(k)+' function space with SP_pt'
     title4='Training loss of '+str(len(total_hist4))+' functions of the m:'+str(m)+',k:'+str(k)+' function space with FSP_pt'
     title5='Training loss of '+str(len(total_hist5))+' functions of the m:'+str(m)+',k:'+str(k)+' function space with MLP_pt'
-    dir_section="run1/sgd/"
+    dir_section="run1/sgd/"+titlews
     image_path1="data/experiments/exp1/"+dir_section+"sp_np.png"
     image_path2="data/experiments/exp1/"+dir_section+"rsp_np.png"
     image_path3="data/experiments/exp1/"+dir_section+"rsp_pt.png"
@@ -306,7 +307,7 @@ def full_analysis_train():
     title4='Training loss of '+str(len(total_hist4))+' functions of the m:'+str(m)+',k:'+str(k)+' function space with FSP_pt'
     title5='Training loss of '+str(len(total_hist5))+' functions of the m:'+str(m)+',k:'+str(k)+' function space with MLP_pt'
     title='Training loss for learning the m:'+str(m)+',k:'+str(k)+' function space'
-    dir_section="run1/sgd/"
+    dir_section="run1/sgd/"+titlews
     image_path6="data/experiments/exp1/"+dir_section+"sp_np_mh.png"
     image_path7="data/experiments/exp1/"+dir_section+"rsp_np_mh.png"
     image_path8="data/experiments/exp1/"+dir_section+"rsp_pt_mh.png"
@@ -330,11 +331,11 @@ def full_analysis_train():
     print("Properties summary 1")
     print("Model: SP_np \t RSP_np \t RSP \t FSP \t MLP")
     print("Params:",sp_np_params1,"\t",rsp_np_params1,"\t",rsp_params1,"\t",fsp_params1,"\t",mlp_params1)
-    print("Avg Forward:",timer11.mean()*1000,"\t",timer21.mean()*1000,"\t",timer31.mean()*1000,"\t",timer41.mean()*1000,"\t",timer51.mean()*1000)
-    print("Avg Backward:",np.mean(con1)*1000,"\t",np.mean(con2)*1000,"\t",np.mean(con3)*1000,"\t",np.mean(con4)*1000,"\t",np.mean(con5)*1000)
+    print("Avg Forward(ms):",timer11.mean()*1000,"\t",timer21.mean()*1000,"\t",timer31.mean()*1000,"\t",timer41.mean()*1000,"\t",timer51.mean()*1000)
+    print("Avg Backward(ms):",np.mean(con1)*1000,"\t",np.mean(con2)*1000,"\t",np.mean(con3)*1000,"\t",np.mean(con4)*1000,"\t",np.mean(con5)*1000)
     print("Training summary 1")
     print("Model: SP_np \t RSP_np \t RSP \t FSP \t MLP")
-    print("Avg Final loss:")
+    print("Avg Final loss:",final_loss1,"\t",final_loss2,"\t",final_loss3,"\t",final_loss4,"\t",final_loss5)
     print("Avg Learned epoch:")
     print("Number of learned functions:")
     print("---------------------------------------------------------------------------------------------------------")
@@ -342,10 +343,26 @@ def full_analysis_train():
     print("Properties summary 2")
     print("Model: SP_np_mh \t RSP_np_mh \t RSP_mh \t FSP_mh \t MLP_mh")
     print("Params:",sp_np_params2,"\t",rsp_np_params2,"\t",rsp_params2,"\t",fsp_params2,"\t",mlp_params2)
-    print("Avg Forward:",timer1.mean()*1000,"\t",timer2.mean()*1000,"\t",timer3.mean()*1000,"\t",timer4.mean()*1000,"\t",timer5.mean()*1000)
-    print("Avg Backward:",np.mean(time_backward6)*1000,"\t",np.mean(time_backward7)*1000,"\t",np.mean(time_backward8)*1000,"\t",np.mean(time_backward9)*1000,"\t",np.mean(time_backward)*1000)
+    print("Avg Forward(ms):",timer1.mean()*1000,"\t",timer2.mean()*1000,"\t",timer3.mean()*1000,"\t",timer4.mean()*1000,"\t",timer5.mean()*1000)
+    print("Avg Backward(ms):",np.mean(time_backward6)*1000,"\t",np.mean(time_backward7)*1000,"\t",np.mean(time_backward8)*1000,"\t",np.mean(time_backward9)*1000,"\t",np.mean(time_backward)*1000)
     print("Training sumary 2")
     print("Model: SP_np \t RSP_np \t RSP \t FSP \t MLP")
     print("Final loss:",final_loss6,"\t",final_loss7,"\t",final_loss8,"\t",final_loss9,"\t",final_loss)
     print("Learned epoch:",learned_epochs6,"\t",learned_epochs7,"\t",learned_epochs8,"\t",learned_epochs9,"\t",learned_epochs)
-full_analysis_train()
+
+
+import sys
+a=[.1,.01,.001]
+b=[100,1000,10000,20000]
+for i in range(5):
+    for j in a:
+         for k in b:
+              orig_stdout = sys.stdout
+              subname=str(i)+"_"+str(j)+"_"+str(k)+"_"
+              out="data/experiments/exp1/run1/sgd/"+subname+".txt"
+              f = open(out, 'w')
+              sys.stdout = f
+              full_analysis_train(k,j,subname)              
+              sys.stdout = orig_stdout
+              f.close()
+
