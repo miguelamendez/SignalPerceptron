@@ -15,10 +15,10 @@ sp_paper_models.py : This library contains the functions used by the MultilayerP
 utils.py : Ploting functions.
 exp1.py:File used for runing all experiments part 1 from the paper (binary boolean functions)
 exp2.py:File used for runing all experiments part 2 from the paper (MNIST datasets)
-exp3.py:File used for learning the parameters using the system of linear equations for general $k$-ary function spaces.
 
 The  files mentioned avobe and the following files are used in the supplementary material:
-train_linear.py: This function obtains the parameters using the system of linear equations algorithm rather than gradient descent.
+exp3.py:File used for learning the parameters using the system of linear equations for general $k$-ary function spaces.
+ This function obtains the parameters using the system of linear equations algorithm rather than gradient descent.
 
 Other files for future work (not part of the paper):
 exp1_beta.py :File used for training all variations of SP and MLP to learn a functional space.[Deprecated check exp1] 
