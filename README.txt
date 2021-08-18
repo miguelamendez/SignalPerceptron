@@ -1,5 +1,5 @@
 This Repo contains the implementation of the algorithms defined in the Signal Perceptron Paper.
-To replicate the experiments in the paper run the experiments.py
+To replicate the experiments in the paper run exp1.py , exp2.py, exp3.py
 
 All the functions are documented inside the .py files here we only explain in general what each file do. For more information check the documentation inside the files.
  
