@@ -5,7 +5,6 @@ from data_load import *
 from train import *
 import os
 from utils import *
-
 def m_k_functional_space_analysis(m,k,samples=[]):
     #Binary Boolean Function space 
     m=m
@@ -30,7 +29,8 @@ def m_k_functional_space_analysis(m,k,samples=[]):
         print("Function: ",y_train[i],"\n Loss: ",total_loss_rsp[i],"\n Parameters: ",alphas_rsp[i])
 
 import sys
-n=5
+print("This experiment is gona be run ",sys.argv[-1], " times:")
+n= int(sys.argv[-1])
 for i in range(0,n):
     orig_stdout = sys.stdout
     subname="functional_analysis"

@@ -8,7 +8,7 @@ from data_load import *
 from train import *
 import os
 from utils import *
-def full_analysis_train(epochs,lr,titlews):
+def full_analysis_train(run,epochs,lr,titlews):
     #Functional Space Hyperparameters
     m=2
     k=2
@@ -240,12 +240,12 @@ def full_analysis_train(epochs,lr,titlews):
     title3='Training loss of '+str(len(total_hist3))+' functions of the m:'+str(m)+',k:'+str(k)+' function space with SP_pt'
     title4='Training loss of '+str(len(total_hist4))+' functions of the m:'+str(m)+',k:'+str(k)+' function space with FSP_pt'
     title5='Training loss of '+str(len(total_hist5))+' functions of the m:'+str(m)+',k:'+str(k)+' function space with MLP_pt'
-    dir_section="run1/sgd/"+titlews
-    image_path1="data/experiments/exp1/"+dir_section+"sp_np.png"
-    image_path2="data/experiments/exp1/"+dir_section+"rsp_np.png"
-    image_path3="data/experiments/exp1/"+dir_section+"rsp_pt.png"
-    image_path4="data/experiments/exp1/"+dir_section+"fsp_pt.png"
-    image_path5="data/experiments/exp1/"+dir_section+"mlp_pt.png"
+    dir_section="run"+str(run+1)+"/graphs"
+    image_path1="data/experiments/exp1/"+dir_section+"/single/"+titlews+"sp_np.png"
+    image_path2="data/experiments/exp1/"+dir_section+"/single/"+titlews+"rsp_np.png"
+    image_path3="data/experiments/exp1/"+dir_section+"/single/"+titlews+"rsp_pt.png"
+    image_path4="data/experiments/exp1/"+dir_section+"/single/"+titlews+"fsp_pt.png"
+    image_path5="data/experiments/exp1/"+dir_section+"/single/"+titlews+"mlp_pt.png"
     #image_path3="data/experiments/exp1/run1/adam/rsp_pt"
     #image_path4="data/experiments/exp1/run1/adam/fsp_pt"
     #image_path5="data/experiments/exp1/run1/adam/mlp_pt"
@@ -307,13 +307,13 @@ def full_analysis_train(epochs,lr,titlews):
     title4='Training loss of '+str(len(total_hist4))+' functions of the m:'+str(m)+',k:'+str(k)+' function space with FSP_pt'
     title5='Training loss of '+str(len(total_hist5))+' functions of the m:'+str(m)+',k:'+str(k)+' function space with MLP_pt'
     title='Training loss for learning the m:'+str(m)+',k:'+str(k)+' function space'
-    dir_section="run1/sgd/"+titlews
-    image_path6="data/experiments/exp1/"+dir_section+"sp_np_mh.png"
-    image_path7="data/experiments/exp1/"+dir_section+"rsp_np_mh.png"
-    image_path8="data/experiments/exp1/"+dir_section+"rsp_pt_mh.png"
-    image_path9="data/experiments/exp1/"+dir_section+"fsp_pt_mh.png"
-    image_path="data/experiments/exp1/"+dir_section+"mlp_pt_mh.png"
-    image_path_mh="data/experiments/exp1/"+dir_section+"all_mh.png"
+    dir_section="run"+str(run+1)+"/graphs"
+    image_path6="data/experiments/exp1/"+dir_section+"/mh_single/"+titlews+"sp_np_mh.png"
+    image_path7="data/experiments/exp1/"+dir_section+"/mh_single/"+titlews+"rsp_np_mh.png"
+    image_path8="data/experiments/exp1/"+dir_section+"/mh_single/"+titlews+"rsp_pt_mh.png"
+    image_path9="data/experiments/exp1/"+dir_section+"/mh_single/"+titlews+"fsp_pt_mh.png"
+    image_path="data/experiments/exp1/"+dir_section+"/mh_single/"+titlews+"mlp_pt_mh.png"
+    image_path_mh="data/experiments/exp1/"+dir_section+"/mh_all/"+titlews+"all_mh.png"
     #image_path3="data/experiments/exp1/run1/adam/rsp_pt_mh"
     #image_path4="data/experiments/exp1/run1/adam/fsp_pt_mh"
     #image_path5="data/experiments/exp1/run1/adam/mlp_pt_mh"
@@ -350,19 +350,22 @@ def full_analysis_train(epochs,lr,titlews):
     print("Final loss:",final_loss6,"\t",final_loss7,"\t",final_loss8,"\t",final_loss9,"\t",final_loss)
     print("Learned epoch:",learned_epochs6,"\t",learned_epochs7,"\t",learned_epochs8,"\t",learned_epochs9,"\t",learned_epochs)
 
-
+#Main loop
 import sys
 a=[.1,.01,.001]
 b=[100,1000,10000,20000]
-for i in range(5):
+print("This experiment is gona be run ",sys.argv[-1], " times:")
+n= int(sys.argv[-1])
+for i in range(n):
     for j in a:
          for k in b:
               orig_stdout = sys.stdout
-              subname=str(i)+"_"+str(j)+"_"+str(k)+"_"
-              out="data/experiments/exp1/run1/sgd/"+subname+".txt"
-              f = open(out, 'w')
+              subfolder="run"+str(i+1)
+              subname=str(j)+"_"+str(k)+"_"
+              out="data/experiments/exp1/"+subfolder+"/data/"+subname+".txt"
+              f = open(out, 'w+')
               sys.stdout = f
-              full_analysis_train(k,j,subname)              
+              full_analysis_train(i,k,j,subname)              
               sys.stdout = orig_stdout
               f.close()
 

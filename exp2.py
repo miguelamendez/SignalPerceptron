@@ -368,10 +368,13 @@ def full_analysis_train(train_mnist_dataloader,test_mnist_dataloader,train_f_mni
 #################################################################################################################################
 #################################################################################################################################
 import sys
-for i in range(5):
+print("This experiment is gona be run ",sys.argv[-1], " times:")
+n= int(sys.argv[-1])
+for i in range(n):
     orig_stdout = sys.stdout
-    subname=str(i)+"_"
-    out="data/experiments/exp2/run1/"+subname+".txt"
+    subfolder="run"+str(i+1)+"/"
+    subname="mnist_dataset_log"
+    out="data/experiments/exp2"+subfolder+subname+".txt"
     f = open(out, 'w')
     sys.stdout = f
     full_analysis_train(train_mnist_dataloader,test_mnist_dataloader,train_f_mnist_dataloader,test_f_mnist_dataloader)             

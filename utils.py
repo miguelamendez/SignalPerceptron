@@ -94,12 +94,6 @@ def single_function_plot(data,title):
     plt.legend()
     plt.show()
 
-<<<<<<< HEAD
-"""Utilis for measuring models properties"""
-=======
-<<<<<<< HEAD
-"""Utilis for measuring models properties"""
-=======
 """Utilis for ploting models properties"""
 def latex_table(description,label,columns_names,table_data):
     print("\begin{table}[h]")
@@ -132,5 +126,3 @@ def latex_table(description,label,columns_names,table_data):
     print("\label{table:",label,"}")
     print("\end{table}")
 
->>>>>>> 86e573259a9b3cf4a28a4d16a69a8cb76c380d84
->>>>>>> f841025c2fac352089826675efa35f6951210401
