@@ -1,0 +1,202 @@
+[[0. 0. 0. 0.]
+ [1. 0. 0. 0.]
+ [0. 1. 0. 0.]
+ [1. 1. 0. 0.]
+ [0. 0. 1. 0.]
+ [1. 0. 1. 0.]
+ [0. 1. 1. 0.]
+ [1. 1. 1. 0.]
+ [0. 0. 0. 1.]
+ [1. 0. 0. 1.]
+ [0. 1. 0. 1.]
+ [1. 1. 0. 1.]
+ [0. 0. 1. 1.]
+ [1. 0. 1. 1.]
+ [0. 1. 1. 1.]
+ [1. 1. 1. 1.]]
+Learnable Parameters for model that learns a function from FS:
+SP_np 	 RSP_np 	 RSP 	 FSP 	 MLP
+4 	 4 	 4 	 12 	 17
+Learnable Parameters for model that learns all FS:
+SP_np 	 RSP_np 	 RSP 	 FSP 	 MLP
+64 	 64 	 64 	 72 	 92
+Forward time for model that learns a function from FS:
+SP_np 	 RSP_np 	 RSP 	 FSP 	 MLP
+3.123283386230469e-05 	 1.0967254638671875e-05 	 0.0001385211944580078 	 3.743171691894531e-05 	 6.532669067382812e-05
+Forward time for model that learns all FS Timer class:
+SP_np 	 RSP_np 	 RSP 	 FSP 	 MLP
+8.760690689086913e-06 	 6.5395832061767575e-06 	 4.150700569152832e-05 	 2.8004884719848632e-05 	 3.567409515380859e-05
+Forward time for model that learns a function from FS Profiler:
+-----------------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg    # of Calls  
+-----------------------  ------------  ------------  ------------  ------------  ------------  ------------  
+    model_inference:rsp        34.26%      74.000us        89.81%     194.000us     194.000us             1  
+           aten::linear         4.63%      10.000us        31.94%      69.000us      34.500us             2  
+           aten::matmul         3.24%       7.000us        14.35%      31.000us      15.500us             2  
+                aten::t         5.09%      11.000us        12.96%      28.000us      14.000us             2  
+              aten::div         5.09%      11.000us        12.04%      26.000us      26.000us             1  
+               aten::mm         8.80%      19.000us        11.11%      24.000us      12.000us             2  
+            aten::zeros         6.94%      15.000us        10.19%      22.000us      22.000us             1  
+               aten::to         5.09%      11.000us         8.33%      18.000us       9.000us             2  
+        aten::transpose         5.09%      11.000us         7.87%      17.000us       8.500us             2  
+            aten::empty         7.41%      16.000us         7.41%      16.000us       3.200us             5  
+-----------------------  ------------  ------------  ------------  ------------  ------------  ------------  
+Self CPU time total: 216.000us
+
+-----------------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg    # of Calls  
+-----------------------  ------------  ------------  ------------  ------------  ------------  ------------  
+    model_inference:fsp        18.67%      45.000us        95.85%     231.000us     231.000us             1  
+           aten::linear         2.90%       7.000us        73.86%     178.000us      89.000us             2  
+                aten::t         4.15%      10.000us        60.17%     145.000us      72.500us             2  
+        aten::transpose        54.77%     132.000us        56.02%     135.000us      67.500us             2  
+           aten::matmul         2.90%       7.000us        10.79%      26.000us      13.000us             2  
+               aten::mm         6.64%      16.000us         7.88%      19.000us       9.500us             2  
+            aten::zeros         2.90%       7.000us         4.15%      10.000us      10.000us             1  
+            aten::empty         2.90%       7.000us         2.90%       7.000us       1.750us             4  
+              aten::cos         2.90%       7.000us         2.90%       7.000us       7.000us             1  
+       aten::as_strided         1.24%       3.000us         1.24%       3.000us       1.500us             2  
+-----------------------  ------------  ------------  ------------  ------------  ------------  ------------  
+Self CPU time total: 241.000us
+
+-----------------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg    # of Calls  
+-----------------------  ------------  ------------  ------------  ------------  ------------  ------------  
+    model_inference:mlp        21.61%      43.000us        95.48%     190.000us     190.000us             1  
+           aten::linear         4.52%       9.000us        66.83%     133.000us      66.500us             2  
+                aten::t         5.03%      10.000us        40.20%      80.000us      40.000us             2  
+        aten::transpose        33.17%      66.000us        35.18%      70.000us      35.000us             2  
+            aten::addmm        13.07%      26.000us        22.11%      44.000us      22.000us             2  
+          aten::sigmoid         6.03%      12.000us         6.03%      12.000us       6.000us             2  
+           aten::expand         4.02%       8.000us         5.53%      11.000us       5.500us             2  
+            aten::zeros         3.02%       6.000us         4.52%       9.000us       9.000us             1  
+       aten::as_strided         3.52%       7.000us         3.52%       7.000us       1.750us             4  
+            aten::copy_         3.52%       7.000us         3.52%       7.000us       3.500us             2  
+-----------------------  ------------  ------------  ------------  ------------  ------------  ------------  
+Self CPU time total: 199.000us
+
+Forward time for model that learns all FS:
+SP_np 	 RSP_np 	 RSP 	 FSP 	 MLP
+4.00543212890625e-05 	 1.1920928955078125e-05 	 0.00014281272888183594 	 4.506111145019531e-05 	 6.985664367675781e-05
+Forward time for model that learns all FS Timer class:
+SP_np 	 RSP_np 	 RSP 	 FSP 	 MLP
+9.195804595947266e-06 	 6.843805313110351e-06 	 4.224252700805664e-05 	 2.8658628463745118e-05 	 3.600859642028809e-05
+Forward time for model that learns all FS Profiler:
+--------------------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                      Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg    # of Calls  
+--------------------------  ------------  ------------  ------------  ------------  ------------  ------------  
+    model_inference:rsp_mh         8.67%      74.000us        97.54%     833.000us     833.000us             1  
+              aten::linear         1.05%       9.000us        83.49%     713.000us     356.500us             2  
+                   aten::t         1.41%      12.000us        78.81%     673.000us     336.500us             2  
+           aten::transpose        77.05%     658.000us        77.40%     661.000us     330.500us             2  
+              aten::matmul         1.05%       9.000us         3.63%      31.000us      15.500us             2  
+                 aten::div         1.17%      10.000us         2.81%      24.000us      24.000us             1  
+                  aten::mm         2.22%      19.000us         2.58%      22.000us      11.000us             2  
+               aten::zeros         1.64%      14.000us         2.46%      21.000us      21.000us             1  
+                  aten::to         0.94%       8.000us         1.76%      15.000us       7.500us             2  
+               aten::empty         1.29%      11.000us         1.29%      11.000us       2.200us             5  
+--------------------------  ------------  ------------  ------------  ------------  ------------  ------------  
+Self CPU time total: 854.000us
+
+--------------------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                      Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg    # of Calls  
+--------------------------  ------------  ------------  ------------  ------------  ------------  ------------  
+    model_inference:fsp_mh        18.38%      43.000us        95.73%     224.000us     224.000us             1  
+              aten::linear        10.68%      25.000us        73.93%     173.000us      86.500us             2  
+                   aten::t         3.85%       9.000us        52.14%     122.000us      61.000us             2  
+           aten::transpose        46.58%     109.000us        48.29%     113.000us      56.500us             2  
+              aten::matmul         2.99%       7.000us        11.11%      26.000us      13.000us             2  
+                  aten::mm         6.41%      15.000us         8.12%      19.000us       9.500us             2  
+               aten::zeros         2.99%       7.000us         4.27%      10.000us      10.000us             1  
+               aten::empty         3.42%       8.000us         3.42%       8.000us       2.000us             4  
+                 aten::cos         2.56%       6.000us         2.56%       6.000us       6.000us             1  
+          aten::as_strided         1.71%       4.000us         1.71%       4.000us       2.000us             2  
+--------------------------  ------------  ------------  ------------  ------------  ------------  ------------  
+Self CPU time total: 234.000us
+
+--------------------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                      Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg    # of Calls  
+--------------------------  ------------  ------------  ------------  ------------  ------------  ------------  
+    model_inference:mlp_mh        21.53%      45.000us        95.69%     200.000us     200.000us             1  
+              aten::linear         3.35%       7.000us        66.99%     140.000us      70.000us             2  
+                   aten::t         4.78%      10.000us        41.63%      87.000us      43.500us             2  
+           aten::transpose        35.89%      75.000us        36.84%      77.000us      38.500us             2  
+               aten::addmm        12.44%      26.000us        22.01%      46.000us      23.000us             2  
+              aten::expand         4.31%       9.000us         6.22%      13.000us       6.500us             2  
+             aten::sigmoid         6.22%      13.000us         6.22%      13.000us       6.500us             2  
+               aten::zeros         2.39%       5.000us         4.31%       9.000us       9.000us             1  
+               aten::copy_         3.35%       7.000us         3.35%       7.000us       3.500us             2  
+          aten::as_strided         2.87%       6.000us         2.87%       6.000us       1.500us             4  
+--------------------------  ------------  ------------  ------------  ------------  ------------  ------------  
+Self CPU time total: 209.000us
+
+Training models for space (m,k): ( 2 , 2 )
+Single function learning
+Parameters: 
+Epochs:  10000  lr:  0.001  optimizer:  sgd
+Signal Perceptron numpy
+(4.9770426607996465e-18+1.294978955097947e-32j) [[1593], [1805], [1712], [1862], [1437], [1749], [1626], [1819], [1719], [1867], [1797], [1913], [1637], [1824], [1740], [1878]] 
+ Backward Time:  4.174806922674179e-05
+Real Signal Perceptron numpy
+2.9036010624126957e-18 [[1721], [1775], [1740], [1790], [1514], [1624], [1555], [1651], [1628], [1703], [1655], [1723], [1205], [1471], [1325], [1519]] 
+ Backward Time:  3.466901332139969e-05
+Real Signal Perceptron pytorch
+1.4453342041944463e-10 [[1200], [1620], [1450], [1689], [1411], [1675], [1549], [1732], [1314], [1645], [1498], [1709], [1467], [1696], [1582], [1749]] 
+ Backward Time:  0.0001765066757798195
+Fourier Signal Perceptron pytorch
+0.031929161659718375 [[607], [], [], [], [], [9821], [], [], [], [], [], [], [], [], [], [701]] 
+ Backward Time:  0.00020093985944986343
+ Multilayer Perceptron pytorch
+0.1871585239423439 [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []] 
+ Backward Time:  0.00023367915153503418
+dse 16
+dse 16
+dse 16
+dse 16
+dse 16
+Training models for space (m,k): ( 2 , 2 )
+Multiple function learning
+Parameters: 
+Epochs:  10000  lr:  0.001  optimizer:  SGD
+Signal Perceptron numpy
+[(7.001771355695192e-18+2.581266436504747e-32j)] [1859] 
+ Backward Time:  4.505147933959961e-05
+Real Signal Perceptron numpy
+[6.4425572624347216e-18] [1839] 
+ Backward Time:  3.399269580841065e-05
+Real Signal Perceptron pytorch
+0.091899216 [] 
+ Backward Time:  0.00019045159816741944
+Fourier Signal Perceptron pytorch
+0.16489026 [] 
+ Backward Time:  0.00020889985561370848
+ Multilayer Perceptron pytorch
+0.23169957 [] 
+ Backward Time:  0.00020889985561370848
+dse 1
+dse 1
+dse 1
+dse 1
+dse 1
+dse 5
+Properties summary 1
+Model: SP_np 	 RSP_np 	 RSP 	 FSP 	 MLP
+Params: 4 	 4 	 4 	 12 	 17
+Avg Forward(ms): 0.008760690689086914 	 0.006539583206176758 	 0.04150700569152832 	 0.028004884719848633 	 0.035674095153808594
+Avg Backward(ms): 0.04174806922674179 	 0.03466901332139969 	 0.1765066757798195 	 0.20093985944986342 	 0.23367915153503419
+Training summary 1
+Model: SP_np 	 RSP_np 	 RSP 	 FSP 	 MLP
+Avg Final loss: (4.9770426607996465e-18+1.294978955097947e-32j) 	 2.9036010624126957e-18 	 1.4453342041944463e-10 	 0.031929161659718375 	 0.1871585239423439
+Avg Learned epoch:
+Number of learned functions:
+---------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------
+Properties summary 2
+Model: SP_np_mh 	 RSP_np_mh 	 RSP_mh 	 FSP_mh 	 MLP_mh
+Params: 64 	 64 	 64 	 72 	 92
+Avg Forward(ms): 0.009195804595947266 	 0.0068438053131103516 	 0.04224252700805664 	 0.028658628463745117 	 0.036008596420288086
+Avg Backward(ms): 0.04505147933959961 	 0.03399269580841065 	 0.19045159816741944 	 0.2088998556137085 	 0.2460423469543457
+Training sumary 2
+Model: SP_np 	 RSP_np 	 RSP 	 FSP 	 MLP
+Final loss: [(7.001771355695192e-18+2.581266436504747e-32j)] 	 [6.4425572624347216e-18] 	 0.091899216 	 0.16489026 	 0.23169957
+Learned epoch: [1859] 	 [1839] 	 [] 	 [] 	 []
