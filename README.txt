@@ -1,4 +1,12 @@
 This Repo contains the implementation of the algorithms defined in the Signal Perceptron Paper.
+
+Pre-Requirements:
+You need to install the following libraries in order to run the code:
+numpy
+pytorch
+torchvision
+matplotlib
+
 Running Procedure:
 To replicate the experiments in the paper run exp1.py , exp2.py with the commands:
 ##############################################################################################

@@ -374,8 +374,8 @@ for i in range(n):
     orig_stdout = sys.stdout
     subfolder="run"+str(i+1)+"/"
     subname="mnist_dataset_log"
-    out="data/experiments/exp2"+subfolder+subname+".txt"
-    f = open(out, 'w')
+    out="data/experiments/exp2/"+subfolder+subname+".txt"
+    f = open(out, 'w+')
     sys.stdout = f
     full_analysis_train(train_mnist_dataloader,test_mnist_dataloader,train_f_mnist_dataloader,test_f_mnist_dataloader)             
     sys.stdout = orig_stdout

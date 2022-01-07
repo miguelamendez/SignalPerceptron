@@ -33,9 +33,10 @@ print("This experiment is gona be run ",sys.argv[-1], " times:")
 n= int(sys.argv[-1])
 for i in range(0,n):
     orig_stdout = sys.stdout
-    subname="functional_analysis"
-    out="data/experiments/exp3/"+subname+"_"+str(i)+".txt"
-    f = open(out, 'w')
+    subfolder="run"+str(i+1)+"/"
+    subname="mnist_dataset_log"
+    out="data/experiments/exp3/"+subfolder+subname+".txt"
+    f = open(out, 'w+')
     sys.stdout = f
     m_k_functional_space_analysis(2,2)
     m_k_functional_space_analysis(3,1)
