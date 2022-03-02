@@ -1,0 +1,15 @@
+[[0. 0. 0. ... 0. 0. 0.]
+ [1. 0. 0. ... 0. 0. 0.]
+ [0. 1. 0. ... 0. 0. 0.]
+ ...
+ [1. 0. 1. ... 1. 1. 1.]
+ [0. 1. 1. ... 1. 1. 1.]
+ [1. 1. 1. ... 1. 1. 1.]]
+Ammount of Learnable Parameters for model that learns a function from FS:
+11
+Training models for space (m,k): ( 2 , 3 )
+Single function learning
+Parameters: 
+Epochs:  1000  lr:  0.1  optimizer:  sgd
+Model:  gn
+0.1529 31

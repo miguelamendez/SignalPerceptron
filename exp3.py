@@ -5,6 +5,9 @@ from data_load import *
 from train import *
 import os
 from utils import *
+import sys
+import numpy as np
+np.set_printoptions(threshold=sys.maxsize)
 def m_k_functional_space_analysis(m,k,samples=[]):
     #Binary Boolean Function space 
     m=m
@@ -19,26 +22,24 @@ def m_k_functional_space_analysis(m,k,samples=[]):
     alphas_sp = train_linear_numpy(y_train,sp_matrix)
     rsp_model = RSP_numpy(m,k)
     sp_model = SP_numpy(m,k)
-    total_loss_rsp = test_linear_numpy(x_train,y_train,rsp_model,alphas_rsp,MSE_Loss)
-    total_loss_sp = test_linear_numpy(x_train,y_train,sp_model,alphas_sp,MSE_Loss)
     print("SP results:")
     for i in range(0,len(y_train)):
-        print("Function: ",y_train[i],"\n Loss: ",total_loss_sp[i],"\n Parameters: ",alphas_sp[i])
-    print("RSP results:")
+        print("Function: ",y_train[i],"\n Parameters: ",np.round(alphas_sp[i],4))
+    print("RealSP results:")
     for i in range(0,len(y_train)):
-        print("Function: ",y_train[i],"\n Loss: ",total_loss_rsp[i],"\n Parameters: ",alphas_rsp[i])
+        print("Function: ",y_train[i],"\n Parameters: ",np.round(alphas_rsp[i],4)) 
 
-import sys
 print("This experiment is gona be run ",sys.argv[-1], " times:")
 n= int(sys.argv[-1])
 for i in range(0,n):
     orig_stdout = sys.stdout
     subfolder="run"+str(i+1)+"/"
-    subname="mnist_dataset_log"
+    subname="functional analisys"
     out="data/experiments/exp3/"+subfolder+subname+".txt"
     f = open(out, 'w+')
     sys.stdout = f
     m_k_functional_space_analysis(2,2)
+    m_k_functional_space_analysis(2,3)
     m_k_functional_space_analysis(3,1)
     m_k_functional_space_analysis(5,2,10)
     m_k_functional_space_analysis(7,2,10)
