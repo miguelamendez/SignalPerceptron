@@ -33,6 +33,26 @@ The results of each run are stored in the folder data/experiments/exp2/
 You can find the learned models under the folder data/models/
 Warning: The models stored in this folder are the ones trained in the last run.
 ##################################################################################################
+For the experiments results provided in the Appendix A and Appendix B:
+python exp1_3.py n k r p
+n: is the name of the mechanism to run which can be:
+ sp for signalperceptron numpy version
+ rsp_np for realsignalperceptron numpy version
+ rsp for realsignalperceptron pytorch version
+ fsp for furiersignal perceptron 
+ mlp for the single layer MLP
+ gn for generalized neuron
+k: defines the arity of the boolean space to be learned.
+r: defines the number of runs that the experiment will be conducted we allowed only up to 5 times as in the article.
+p: is if you want the plots of the graphs of the loss functions, if you want them write yes , other whise no.
+Example.
+For conducting 4 times the experiments of learn all ternary boolean functions and using the FurierSgnalPerceptron (with plots):
+python exp1_3.py fsp 3 4 yes
+
+The results of each run are stored in the folder data/experiments/exp1_3/ 
+You can find the learned models under the folder data/models/
+Warning: The models stored in this folder are the ones trained in the last run.
+##################################################################################################
 All the functions are documented inside the .py files here we only explain in general what each file do. For more information check the documentation inside the files.
  
 The following  files are used by the experiments.py:
